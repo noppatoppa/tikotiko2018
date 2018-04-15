@@ -43,13 +43,13 @@ public class Divari {
             switch (selection) {
                 case 1:
                     System.out.println("Making a search: ");
-                    connectDB.doSearch();
+                    ConnectDB.doSearch();
                     break;
                 case 2:
                     System.out.println("Give title to search: ");
                     Scanner user_input = new Scanner(System.in);
                     String name = user_input.next();
-                    connectDB.doSearchByName(name);
+                    ConnectDB.doSearchByName(name);
                     break;
                 case 3:
                     System.out.println("Logging out");

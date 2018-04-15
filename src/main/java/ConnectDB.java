@@ -1,6 +1,6 @@
 import java.sql.*;
 
-class connectDB {
+class ConnectDB {
 
     private static final String PROTOKOLLA = "jdbc:postgresql:";
     private static final String PALVELIN = "localhost";
