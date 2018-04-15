@@ -1,5 +1,5 @@
 public interface Users {
-    void signIn();
+    void signIn(String[] auth);
     void logOut();
     boolean statusQuery();
     void searchBook(String searchCriteria);

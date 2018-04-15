@@ -48,3 +48,6 @@ VALUES ('9155430674', 'Madeleine Brent', 'Elektran tytär', 1986, 1, 1, 10, 9, 3
 ('0000000000', 'Mika Waltari', 'Komisario Palmun erehdys', 1940, 3, 1, 13, 6, 6),
 ('0000000000', 'Shelton Gilbert', 'Friikkilän pojat Mexicossa', 1989, 4, 2, 14, 5, 7),
 ('9789510396230', 'Dale Carnegien',  'Miten saan ystäviä, menestystä, vaikutusvaltaa', 1939, 5, 3, 4, 8, 8);
+
+INSERT INTO asiakas (ktunnus, salasana, nimi, osoite, pnumero, email)
+VALUES ('jkana', 'salakala', 'Jaakko Kana', 'Pilipaliraitti 1', '0505050505', 'testimaili@mailitus.urg');

@@ -14,6 +14,7 @@ public class Divari {
 
         boolean cont = true;
         Customer customer = new Customer();
+        Scanner user_input = new Scanner(System.in);
 
         while (cont && !customer.statusQuery()) {
             Integer selection = View.userLogInView();
@@ -25,7 +26,12 @@ public class Divari {
                     System.out.println("New customer!"); // TODO
                     break;
                 case 2:
-                    customer.signIn();
+                    String[] authInfo = new String[2];
+                    System.out.println("Please give username: ");
+                    authInfo[0] = user_input.next();
+                    System.out.println("Please give password: ");
+                    authInfo[1] = user_input.next();
+                    customer.signIn(authInfo);
                     break;
                 case 3:
                     customer.logOut();
@@ -47,7 +53,6 @@ public class Divari {
                     break;
                 case 2:
                     System.out.println("Give title to search: ");
-                    Scanner user_input = new Scanner(System.in);
                     String name = user_input.next();
                     ConnectDB.doSearchByName(name);
                     break;
@@ -61,8 +66,5 @@ public class Divari {
                     break;
             }
         }
-
-        System.out.println("Connecting to db from main:");
-
     }
 }

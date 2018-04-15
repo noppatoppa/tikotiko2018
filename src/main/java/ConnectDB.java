@@ -90,4 +90,31 @@ class ConnectDB {
             closeConnection(con);
         }
     }
+
+    static String getAuthFromDb(String username) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        String password = "";
+
+        try {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("SELECT salasana FROM asiakas WHERE ktunnus = ?");
+            pstmt.clearParameters();
+            pstmt.setString(1, username);
+            ResultSet rset = pstmt.executeQuery();
+            if (rset.next()) {
+                password = rset.getString("salasana");
+            } else {
+                System.out.println("Ei löytynyt mitään!");
+                password = null;
+            }
+            pstmt.close();  // sulkee automaattisesti myös tulosjoukon rset
+        } catch (SQLException err) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        }
+        finally {
+            closeConnection(con);
+        }
+        return password;
+    }
 }
