@@ -1,3 +1,5 @@
+import java.lang.ref.SoftReference;
+import java.sql.Connection;
 import java.util.Scanner;
 
 public class Divari {
@@ -18,12 +20,28 @@ public class Divari {
 
         while (cont && !customer.statusQuery()) {
             Integer selection = View.userLogInView();
-            System.out.println(selection);
 
             /* Logging in */
             switch (selection) {
                 case 1:
                     System.out.println("New customer!"); // TODO
+
+                    System.out.println("Please give some basic information:");
+                    System.out.println("First your name:");
+                        String name = user_input.next();
+                    System.out.println("Select username:");
+                        String uid = user_input.next();
+                    System.out.println("Set a password:");
+                        String password = user_input.next();
+                    System.out.println("Address:");
+                        String address = user_input.next();
+                    System.out.println("Phone number (+358...):");
+                        String phoneNumber = user_input.next();
+                    System.out.println("Email:");
+                        String email = user_input.next();
+
+                    String userData[] = {name, uid, password, address, phoneNumber, email};
+                    ConnectDB.addUser(userData);
                     break;
                 case 2:
                     String[] authInfo = new String[2];

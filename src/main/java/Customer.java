@@ -32,7 +32,6 @@ public class Customer implements Users {
     }
 
     public boolean statusQuery() {
-        System.out.println(this.signedIn);
         return this.signedIn;
     }
 

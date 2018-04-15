@@ -117,4 +117,20 @@ class ConnectDB {
         }
         return password;
     }
+
+    static void addUser(String[] args) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        String password = "";
+
+        try {
+            for (int i = 0; i < args.length; i++) {
+                System.out.println(i + " " + args[i]);
+            }
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
+            closeConnection(con);
+        }
+    }
 }
