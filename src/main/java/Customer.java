@@ -1,3 +1,5 @@
+import java.sql.SQLException;
+
 public class Customer implements Users {
     private boolean signedIn = false;
 
@@ -7,7 +9,13 @@ public class Customer implements Users {
 
     public void signIn(String[] auth) {
         System.out.println("Username: " + auth[0] + ", password " + auth[1]);
-        if (ConnectDB.getAuthFromDb(auth[0]).equals(auth[1])) {
+        String password = "";
+        try {
+            password = ConnectDB.getAuthFromDb(auth[0]);
+        } catch (Exception err) {
+            System.out.println("Problem occurred getting auth: " + err);
+        }
+        if (password != null && password.equals(auth[1])) {
             System.out.println("Auth successful!");
             this.signedIn = true;
         } else {
@@ -15,13 +23,11 @@ public class Customer implements Users {
             this.signedIn = false;
         }
         System.out.println("Status: " + this.signedIn);
-        //return signedIn;
     }
 
     public void logOut() {
-        this.signedIn = false;
+        if (this.signedIn) this.signedIn = false;
         System.out.println("Status: " + this.signedIn);
-        //return signedIn;
     }
 
     public boolean statusQuery() {
