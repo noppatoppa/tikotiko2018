@@ -1,5 +1,9 @@
-public class Customer implements userCustomer {
+public class Customer implements Users {
     private boolean signedIn = false;
+
+    /* TODO:
+        - proper setter and getters for status
+     */
 
     public void signIn() {
         signedIn = true;
@@ -13,8 +17,9 @@ public class Customer implements userCustomer {
         //return signedIn;
     }
 
-    public void statusQuery() {
+    public boolean statusQuery() {
         System.out.println(signedIn);
+        return signedIn;
     }
 
     public void searchBook(String searchCriteria) {

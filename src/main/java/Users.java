@@ -1,6 +1,6 @@
-public interface userCustomer {
+public interface Users {
     void signIn();
     void logOut();
-    void statusQuery();
+    boolean statusQuery();
     void searchBook(String searchCriteria);
 }
