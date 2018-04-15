@@ -2,6 +2,7 @@ import java.sql.SQLException;
 
 public class Customer implements Users {
     private boolean signedIn = false;
+    private boolean isUserAdmin = false;
 
     /* TODO:
         - proper setter and getters for status
@@ -37,5 +38,9 @@ public class Customer implements Users {
 
     public void searchBook(String searchCriteria) {
         //return searchCriteria;
+    }
+
+    public boolean isAdmin() {
+        return this.isUserAdmin;
     }
 }

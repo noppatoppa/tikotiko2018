@@ -3,4 +3,5 @@ public interface Users {
     void logOut();
     boolean statusQuery();
     void searchBook(String searchCriteria);
+    boolean isAdmin();
 }
