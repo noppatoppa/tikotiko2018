@@ -10,31 +10,14 @@ class connectDB {
     private static final String SALASANA = "salakala";  // tähän tietokannan salasana
 
 
-    private static void connect(String[] args) {
+    private static Connection connect(String[] args) {
         Connection con = null;
         try {
             con = DriverManager.getConnection(args[0] + "//" + args[1] + ":" + args[2] + "/" + args[3], args[4], args[5]);
-
-            Statement stmt = con.createStatement();
-            ResultSet rset = stmt.executeQuery("SELECT *" + "FROM teos");
-            if (rset.next()) {
-                System.out.println("Teoksia löytyi: " + rset.getInt(1));
-                System.out.println("Ensimmäinen teos on nimeltään " + rset.getString("nimi"));
-                ResultSetMetaData metadata = rset.getMetaData();
-                StringBuilder row = new StringBuilder();
-                for (int i = 1; i <= metadata.getColumnCount(); i++) {
-                    row.append(rset.getString(i)).append(", ");
-                }
-                System.out.println("Ja sitten: " + row);
-            } else {
-                System.out.println("Ei löytynyt mitään!");
-            }
-            stmt.close();  // sulkee automaattisesti myös tulosjoukon rset
-
         } catch (SQLException poikkeus) {
             System.out.println("Tapahtui seuraava virhe: " + poikkeus.getMessage());
         }
-        closeConnection(con);
+        return con;
     }
 
     private static void closeConnection(Connection connection) {
@@ -50,6 +33,28 @@ class connectDB {
 
     static void doSearch() {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
-        connect(params);
+        Connection con = connect(params);
+
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rset = stmt.executeQuery("SELECT *" + "FROM teos");
+            if (rset.next()) {
+                System.out.println("Teoksia löytyi: " + rset.getInt(1));
+                System.out.println("Ensimmäinen teos on nimeltään " + rset.getString("nimi"));
+                ResultSetMetaData metadata = rset.getMetaData();
+                StringBuilder row = new StringBuilder();
+                for (int i = 1; i <= metadata.getColumnCount(); i++) {
+                    row.append(rset.getString(i)).append(", ");
+                }
+                System.out.println("Ja sitten: " + row);
+            } else {
+                System.out.println("Ei löytynyt mitään!");
+            }
+            stmt.close();  // sulkee automaattisesti myös tulosjoukon rset
+        } catch (SQLException err) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        }
+
+        closeConnection(con);
     }
 }
