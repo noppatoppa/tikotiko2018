@@ -133,4 +133,50 @@ class ConnectDB {
             closeConnection(con);
         }
     }
+    
+    static boolean bookExists(String isbn) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        
+        try {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("SELECT TOP 1 teos.teos_id FROM teos WHERE isbn = ?");
+            pstmt.clearParameters();
+            pstmt.setString(1, isbn);
+            ResultSet rset = pstmt.executeQuery();
+            if (rset.next()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
+            closeConnection(con);
+        }
+        
+        return false;
+    }
+    
+    static void addBook(String[] args) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        
+        try {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("INSERT INTO teos (isbn, tekija, nimi, vuosi, luokka, tyyppi) VALUES (?, ?, ?, ?, ?, ?)");
+            pstmt.clearParameters();
+            pstmt.setString(1, args[0]);
+            pstmt.setString(2, args[1]);
+            pstmt.setString(3, args[2]);
+            pstmt.setInt(4, Integer.parseInt(args[3]));
+            pstmt.setString(5, args[4]);
+            pstmt.setString(6, args[5]);
+            pstmt.executeUpdate();
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
+            closeConnection(con);
+        }
+    }
 }

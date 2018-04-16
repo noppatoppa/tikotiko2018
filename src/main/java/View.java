@@ -34,7 +34,14 @@ class View {
     }
 
     static int adminMenuView () {
-        /* Admin menu stuff */
-        return 0;
+        /* Show admin functions */
+        System.out.println("Select admin action");
+        System.out.println("1) add new book");
+        System.out.println("2) add new item(s)");
+        System.out.println("3) logout");
+        Scanner user_input = new Scanner(System.in);
+        String selection = user_input.next();
+        
+        return Integer.parseInt(selection);
     }
 }

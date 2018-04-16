@@ -10,6 +10,7 @@ public class Divari {
             -- creating new user
         - Prepared statements
         - SQL creation statements
+        - Schema-based admin authentication
      */
 
     public static void main (String args[]) {
@@ -61,7 +62,7 @@ public class Divari {
             }
         }
 
-        while (cont && customer.statusQuery()) {
+        while (cont && customer.statusQuery() && !customer.isAdmin()) {
             /* Main menu */
             Integer selection = View.mainMenuView();
             switch (selection) {
@@ -74,6 +75,44 @@ public class Divari {
                     String name = user_input.next();
                     ConnectDB.doSearchByName(name);
                     break;
+                case 3:
+                    System.out.println("Logging out");
+                    customer.logOut();
+                    cont = false;
+                    break;
+                default:
+                    System.out.println("Not a valid selection, sorry.");
+                    break;
+            }
+        }
+        
+        while (cont && customer.statusQuery() && customer.isAdmin()) {
+            /* Admin menu */
+            Integer selection = View.adminMenuView();
+            switch (selection) {
+                case 1:
+                    System.out.println("Please input the book's ISBN number:");
+                    String isbn = user_input.next();
+                    if (ConnectDB.bookExists(isbn)) {
+                        System.out.println("A book record with the ISBN number you inputted already exists.");
+                        break;
+                    }
+                    
+                    System.out.println("Book title:");
+                        String title = user_input.next();
+                    System.out.println("Book author:");
+                        String author = user_input.next();
+                    System.out.println("Year published:");
+                        String year = user_input.next();
+                    System.out.println("Book genre:");
+                        String genre = user_input.next();
+                    System.out.println("Book type:");
+                        String type = user_input.next();
+                    
+                    String bookData[] = {isbn, author, title, year, genre, type};
+                    ConnectDB.addBook(bookData);
+                    break;
+                case 2:
                 case 3:
                     System.out.println("Logging out");
                     customer.logOut();
