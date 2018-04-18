@@ -134,7 +134,8 @@ class ConnectDB {
         }
     }
     
-    static boolean bookExists(String isbn) {
+    // returns the id of the book if found, otherwise -1
+    static int bookExists(String isbn) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
         
@@ -145,9 +146,9 @@ class ConnectDB {
             pstmt.setString(1, isbn);
             ResultSet rset = pstmt.executeQuery();
             if (rset.next()) {
-                return true;
+                return rset.getInt("teos_id");
             } else {
-                return false;
+                return -1;
             }
         } catch ( Exception err ) {
             System.out.println("Shit went down, yo " + err.getMessage());
@@ -155,7 +156,7 @@ class ConnectDB {
             closeConnection(con);
         }
         
-        return false;
+        return -1;
     }
     
     static void addBook(String[] args) {
@@ -165,13 +166,27 @@ class ConnectDB {
         try {
             PreparedStatement pstmt;
             pstmt = con.prepareStatement("INSERT INTO teos (isbn, tekija, nimi, vuosi, luokka, tyyppi) VALUES (?, ?, ?, ?, ?, ?)");
-            pstmt.clearParameters();
-            pstmt.setString(1, args[0]);
-            pstmt.setString(2, args[1]);
-            pstmt.setString(3, args[2]);
-            pstmt.setInt(4, Integer.parseInt(args[3]));
-            pstmt.setString(5, args[4]);
-            pstmt.setString(6, args[5]);
+            for (int i = 1; i <= 6; i++) {
+                pstmt.setString(i, args[i]);
+            }
+            pstmt.executeUpdate();
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
+            closeConnection(con);
+        }
+    }
+    
+    static void addItem(String[] args) {
+                String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        
+        try {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("INSERT INTO myyntikappale (teos_id, myyntihinta, ostohinta, paino) VALUES (?, ?, ?, ?)");
+            for (int i = 1; i <= 4; i++) {
+                pstmt.setString(i, args[i]);
+            }
             pstmt.executeUpdate();
         } catch ( Exception err ) {
             System.out.println("Shit went down, yo " + err.getMessage());

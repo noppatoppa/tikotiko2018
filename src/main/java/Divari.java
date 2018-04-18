@@ -88,13 +88,14 @@ public class Divari {
         
         while (cont && customer.statusQuery() && customer.isAdmin()) {
             /* Admin menu */
+            String isbn;
             Integer selection = View.adminMenuView();
             switch (selection) {
                 case 1:
-                    System.out.println("Please input the book's ISBN number:");
-                    String isbn = user_input.next();
-                    if (ConnectDB.bookExists(isbn)) {
-                        System.out.println("A book record with the ISBN number you inputted already exists.");
+                    System.out.println("Please enter the book's ISBN number:");
+                    isbn = user_input.next();
+                    if (ConnectDB.bookExists(isbn) != -1) {
+                        System.out.println("A book record with the ISBN number you entered already exists.");
                         break;
                     }
                     
@@ -113,6 +114,24 @@ public class Divari {
                     ConnectDB.addBook(bookData);
                     break;
                 case 2:
+                    System.out.println("Please enter the book's ISBN number:");
+                    isbn = user_input.next();
+                    int bookID = ConnectDB.bookExists(isbn);
+                    if (bookID == -1) {
+                        System.out.println("A book record with the ISBN number you entered does not exist, please try again.");
+                        break;
+                    }
+                    
+                    System.out.println("Sale price:");
+                        String salePrice = user_input.next();
+                    System.out.println("Purchase price:");
+                        String purchasePrice = user_input.next();
+                    System.out.println("Weight:");
+                        String weight = user_input.next();
+                    
+                    String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice, weight};
+                    ConnectDB.addItem(itemData);
+                    break;
                 case 3:
                     System.out.println("Logging out");
                     customer.logOut();
