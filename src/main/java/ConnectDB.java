@@ -120,14 +120,31 @@ class ConnectDB {
 
     static void addUser(String[] args) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        String name, uid, password, address, phone, email = "";
+        name = args[0]; uid = args[1]; password = args[2]; address = args[3]; phone = args[4]; email = args[5];
         Connection con = connect(params);
-        String password = "";
+
+
+        /* TODO:
+            - formulate prepared statements
+         */
 
         try {
-            for (int i = 0; i < args.length; i++) {
-                System.out.println(i + " " + args[i]);
-            }
-        } catch ( Exception err ) {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("INSERT INTO asiakas (ktunnus, salasana, nimi, osoite, pnumero, email) VALUES (?, ?, ?, ?, ?, ?)");
+            pstmt.clearParameters();
+            pstmt.setString(1, uid);
+            pstmt.setString(2, password);
+            pstmt.setString(3, name);
+            pstmt.setString(4, address);
+            pstmt.setString(5, phone);
+            pstmt.setString(6, email);
+
+            int resultsNum = pstmt.executeUpdate();
+            System.out.println("Rows inserted: " + resultsNum);
+            pstmt.close();  // sulkee automaattisesti myös tulosjoukon rset
+
+        } catch ( SQLException err ) {
             System.out.println("Shit went down, yo " + err.getMessage());
         } finally {
             closeConnection(con);

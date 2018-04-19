@@ -41,7 +41,8 @@ public class Divari {
                         String email = user_input.next();
 
                     String userData[] = {name, uid, password, address, phoneNumber, email};
-                    ConnectDB.addUser(userData);
+                    ConnectDB.addUser(userData); // TODO: After adding, login automatically
+                    customer.signIn(new String[] {uid, password});
                     break;
                 case 2:
                     String[] authInfo = new String[2];
