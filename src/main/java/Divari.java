@@ -1,3 +1,5 @@
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
+
 import java.lang.ref.SoftReference;
 import java.sql.Connection;
 import java.util.Scanner;
@@ -19,70 +21,77 @@ public class Divari {
         Scanner user_input = new Scanner(System.in);
 
         while (cont && !customer.statusQuery()) {
-            Integer selection = View.userLogInView();
+            try {
+                Integer selection = View.userLogInView();
+                /* Logging in */
+                switch (selection) {
+                    case 1:
+                        System.out.println("New customer!"); // TODO
 
-            /* Logging in */
-            switch (selection) {
-                case 1:
-                    System.out.println("New customer!"); // TODO
-
-                    System.out.println("Please give some basic information:");
-                    System.out.println("First your name:");
+                        System.out.println("Please give some basic information:");
+                        System.out.println("First your name:");
                         String name = user_input.next();
-                    System.out.println("Select username:");
+                        System.out.println("Select username:");
                         String uid = user_input.next();
-                    System.out.println("Set a password:");
+                        System.out.println("Set a password:");
                         String password = user_input.next();
-                    System.out.println("Address:");
+                        System.out.println("Address:");
                         String address = user_input.next();
-                    System.out.println("Phone number (+358...):");
+                        System.out.println("Phone number (+358...):");
                         String phoneNumber = user_input.next();
-                    System.out.println("Email:");
+                        System.out.println("Email:");
                         String email = user_input.next();
 
-                    String userData[] = {name, uid, password, address, phoneNumber, email};
-                    ConnectDB.addUser(userData); // TODO: After adding, login automatically
-                    customer.signIn(new String[] {uid, password});
-                    break;
-                case 2:
-                    String[] authInfo = new String[2];
-                    System.out.println("Please give username: ");
-                    authInfo[0] = user_input.next();
-                    System.out.println("Please give password: ");
-                    authInfo[1] = user_input.next();
-                    customer.signIn(authInfo);
-                    break;
-                case 3:
-                    customer.logOut();
-                    cont = false;
-                    break;
-                default:
-                    System.out.println("Not a valid selection, sorry.");
-                    break;
+                        String userData[] = {name, uid, password, address, phoneNumber, email};
+                        ConnectDB.addUser(userData); // TODO: After adding, login automatically
+                        customer.signIn(new String[]{uid, password});
+                        break;
+                    case 2:
+                        String[] authInfo = new String[2];
+                        System.out.println("Please give username: ");
+                        authInfo[0] = user_input.next();
+                        System.out.println("Please give password: ");
+                        authInfo[1] = user_input.next();
+                        customer.signIn(authInfo);
+                        break;
+                    case 3:
+                        customer.logOut();
+                        cont = false;
+                        break;
+                    default:
+                        System.out.println("Not a valid selection, sorry.");
+                        break;
+                }
+            } catch (NumberFormatException err) {
+                System.out.println("Not valid input: " + err);
             }
         }
 
         while (cont && customer.statusQuery()) {
             /* Main menu */
-            Integer selection = View.mainMenuView();
-            switch (selection) {
-                case 1:
-                    System.out.println("Making a search: ");
-                    ConnectDB.doSearch();
-                    break;
-                case 2:
-                    System.out.println("Give title to search: ");
-                    String name = user_input.next();
-                    ConnectDB.doSearchByName(name);
-                    break;
-                case 3:
-                    System.out.println("Logging out");
-                    customer.logOut();
-                    cont = false;
-                    break;
-                default:
-                    System.out.println("Not a valid selection, sorry.");
-                    break;
+            try {
+                Integer selection = View.mainMenuView();
+                switch (selection) {
+                    case 1:
+                        System.out.println("Making a search: ");
+                        ConnectDB.doSearch();
+                        break;
+                    case 2:
+                        System.out.println("Give title to search: ");
+                        String name = user_input.next();
+                        ConnectDB.doSearchByName(name);
+                        break;
+                    case 3:
+                        System.out.println("Logging out");
+                        customer.logOut();
+                        cont = false;
+                        break;
+                    default:
+                        System.out.println("Not a valid selection, sorry.");
+                        break;
+                }
+            } catch (NumberFormatException err) {
+                System.out.println("Not valid input: " + err);
             }
         }
     }
