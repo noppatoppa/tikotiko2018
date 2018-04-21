@@ -62,7 +62,7 @@ public class Divari {
             }
         }
 
-        while (cont && customer.statusQuery() && customer.isAdmin()) {
+        while (cont && customer.statusQuery() && !customer.isAdmin()) {
             /* Main menu */
             Integer selection = View.mainMenuView();
             switch (selection) {
@@ -86,60 +86,64 @@ public class Divari {
             }
         }
         
-        while (cont && customer.statusQuery() && !customer.isAdmin()) {
+        while (cont && customer.statusQuery() && customer.isAdmin()) {
             /* Admin menu */
-            String isbn;
-            Integer selection = View.adminMenuView();
-            switch (selection) {
-                case 1:
-                    System.out.println("Please enter the book's ISBN number:");
-                    isbn = user_input.nextLine();
-                    if (ConnectDB.bookExists(isbn) != -1) {
-                        System.out.println("A book record with the ISBN number you entered already exists.");
+            try {
+                String isbn;
+                Integer selection = View.adminMenuView();
+                switch (selection) {
+                    case 1:
+                        System.out.println("Please enter the book's ISBN number:");
+                        isbn = user_input.nextLine();
+                        if (ConnectDB.bookExists(isbn) != -1) {
+                            System.out.println("A book record with the ISBN number you entered already exists.");
+                            break;
+                        }
+
+                        System.out.println("Book title:");
+                            String title = user_input.nextLine();
+                        System.out.println("Book author:");
+                            String author = user_input.nextLine();
+                        System.out.println("Year published:");
+                            String year = user_input.nextLine();
+                        System.out.println("Book genre:");
+                            String genre = user_input.nextLine();
+                        System.out.println("Book type:");
+                            String type = user_input.nextLine();
+
+                        String bookData[] = {isbn, author, title, year, genre, type};
+                        ConnectDB.addBook(bookData);
                         break;
-                    }
-                    
-                    System.out.println("Book title:");
-                        String title = user_input.nextLine();
-                    System.out.println("Book author:");
-                        String author = user_input.nextLine();
-                    System.out.println("Year published:");
-                        String year = user_input.nextLine();
-                    System.out.println("Book genre:");
-                        String genre = user_input.nextLine();
-                    System.out.println("Book type:");
-                        String type = user_input.nextLine();
-                    
-                    String bookData[] = {isbn, author, title, year, genre, type};
-                    ConnectDB.addBook(bookData);
-                    break;
-                case 2:
-                    System.out.println("Please enter the book's ISBN number:");
-                    isbn = user_input.nextLine();
-                    int bookID = ConnectDB.bookExists(isbn);
-                    if (bookID == -1) {
-                        System.out.println("A book record with the ISBN number you entered does not exist, please try again.");
+                    case 2:
+                        System.out.println("Please enter the book's ISBN number:");
+                        isbn = user_input.nextLine();
+                        int bookID = ConnectDB.bookExists(isbn);
+                        if (bookID == -1) {
+                            System.out.println("A book record with the ISBN number you entered does not exist, please try again.");
+                            break;
+                        }
+
+                        System.out.println("Sale price:");
+                            String salePrice = user_input.nextLine();
+                        System.out.println("Purchase price:");
+                            String purchasePrice = user_input.nextLine();
+                        System.out.println("Weight:");
+                            String weight = user_input.nextLine();
+
+                        String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice, weight};
+                        ConnectDB.addItem(itemData);
                         break;
-                    }
-                    
-                    System.out.println("Sale price:");
-                        String salePrice = user_input.nextLine();
-                    System.out.println("Purchase price:");
-                        String purchasePrice = user_input.nextLine();
-                    System.out.println("Weight:");
-                        String weight = user_input.nextLine();
-                    
-                    String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice, weight};
-                    ConnectDB.addItem(itemData);
-                    break;
-                case 3:
-                    System.out.println("Logging out");
-                    customer.logOut();
-                    cont = false;
-                    break;
-                default:
-                    System.out.println("Not a valid selection, sorry.");
-                    break;
+                    case 3:
+                        System.out.println("Logging out");
+                        customer.logOut();
+                        cont = false;
+                        break;
+                    default:
+                        System.out.println("Not a valid selection, sorry.");
+                        break;
+                }
+            } catch ( NumberFormatException err ) {
+                System.out.println("Invalid input: " + err);
             }
         }
     }
