@@ -29,17 +29,17 @@ public class Divari {
 
                     System.out.println("Please give some basic information:");
                     System.out.println("First your name:");
-                        String name = user_input.next();
+                        String name = user_input.nextLine();
                     System.out.println("Select username:");
-                        String uid = user_input.next();
+                        String uid = user_input.nextLine();
                     System.out.println("Set a password:");
-                        String password = user_input.next();
+                        String password = user_input.nextLine();
                     System.out.println("Address:");
-                        String address = user_input.next();
+                        String address = user_input.nextLine();
                     System.out.println("Phone number (+358...):");
-                        String phoneNumber = user_input.next();
+                        String phoneNumber = user_input.nextLine();
                     System.out.println("Email:");
-                        String email = user_input.next();
+                        String email = user_input.nextLine();
 
                     String userData[] = {name, uid, password, address, phoneNumber, email};
                     ConnectDB.addUser(userData);
@@ -47,9 +47,9 @@ public class Divari {
                 case 2:
                     String[] authInfo = new String[2];
                     System.out.println("Please give username: ");
-                    authInfo[0] = user_input.next();
+                    authInfo[0] = user_input.nextLine();
                     System.out.println("Please give password: ");
-                    authInfo[1] = user_input.next();
+                    authInfo[1] = user_input.nextLine();
                     customer.signIn(authInfo);
                     break;
                 case 3:
@@ -62,7 +62,7 @@ public class Divari {
             }
         }
 
-        while (cont && customer.statusQuery() && !customer.isAdmin()) {
+        while (cont && customer.statusQuery() && customer.isAdmin()) {
             /* Main menu */
             Integer selection = View.mainMenuView();
             switch (selection) {
@@ -72,7 +72,7 @@ public class Divari {
                     break;
                 case 2:
                     System.out.println("Give title to search: ");
-                    String name = user_input.next();
+                    String name = user_input.nextLine();
                     ConnectDB.doSearchByName(name);
                     break;
                 case 3:
@@ -86,36 +86,36 @@ public class Divari {
             }
         }
         
-        while (cont && customer.statusQuery() && customer.isAdmin()) {
+        while (cont && customer.statusQuery() && !customer.isAdmin()) {
             /* Admin menu */
             String isbn;
             Integer selection = View.adminMenuView();
             switch (selection) {
                 case 1:
                     System.out.println("Please enter the book's ISBN number:");
-                    isbn = user_input.next();
+                    isbn = user_input.nextLine();
                     if (ConnectDB.bookExists(isbn) != -1) {
                         System.out.println("A book record with the ISBN number you entered already exists.");
                         break;
                     }
                     
                     System.out.println("Book title:");
-                        String title = user_input.next();
+                        String title = user_input.nextLine();
                     System.out.println("Book author:");
-                        String author = user_input.next();
+                        String author = user_input.nextLine();
                     System.out.println("Year published:");
-                        String year = user_input.next();
+                        String year = user_input.nextLine();
                     System.out.println("Book genre:");
-                        String genre = user_input.next();
+                        String genre = user_input.nextLine();
                     System.out.println("Book type:");
-                        String type = user_input.next();
+                        String type = user_input.nextLine();
                     
                     String bookData[] = {isbn, author, title, year, genre, type};
                     ConnectDB.addBook(bookData);
                     break;
                 case 2:
                     System.out.println("Please enter the book's ISBN number:");
-                    isbn = user_input.next();
+                    isbn = user_input.nextLine();
                     int bookID = ConnectDB.bookExists(isbn);
                     if (bookID == -1) {
                         System.out.println("A book record with the ISBN number you entered does not exist, please try again.");
@@ -123,11 +123,11 @@ public class Divari {
                     }
                     
                     System.out.println("Sale price:");
-                        String salePrice = user_input.next();
+                        String salePrice = user_input.nextLine();
                     System.out.println("Purchase price:");
-                        String purchasePrice = user_input.next();
+                        String purchasePrice = user_input.nextLine();
                     System.out.println("Weight:");
-                        String weight = user_input.next();
+                        String weight = user_input.nextLine();
                     
                     String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice, weight};
                     ConnectDB.addItem(itemData);
