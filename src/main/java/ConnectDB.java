@@ -37,7 +37,7 @@ class ConnectDB {
 
         try {
             Statement stmt = con.createStatement();
-            ResultSet rset = stmt.executeQuery("SELECT *" + "FROM teos");
+            ResultSet rset = stmt.executeQuery("SELECT *" + "FROM keskusdivari.teos");
             if (rset.next()) {
                 System.out.println("Teoksia löytyi: " + rset.getInt(1));
                 System.out.println("Ensimmäinen teos on nimeltään " + rset.getString("nimi"));
@@ -65,7 +65,7 @@ class ConnectDB {
 
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("SELECT * FROM teos WHERE nimi ILIKE ?");
+            pstmt = con.prepareStatement("SELECT * FROM keskusdivari.teos WHERE nimi ILIKE ?");
             pstmt.clearParameters();
             pstmt.setString(1, "%" + paramName + "%");
             ResultSet rset = pstmt.executeQuery();
@@ -98,7 +98,7 @@ class ConnectDB {
 
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("SELECT salasana FROM asiakas WHERE ktunnus = ?");
+            pstmt = con.prepareStatement("SELECT salasana FROM keskusdivari.asiakas WHERE ktunnus = ?");
             pstmt.clearParameters();
             pstmt.setString(1, username);
             ResultSet rset = pstmt.executeQuery();
@@ -131,7 +131,7 @@ class ConnectDB {
 
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("INSERT INTO asiakas (ktunnus, salasana, nimi, osoite, pnumero, email) VALUES (?, ?, ?, ?, ?, ?)");
+            pstmt = con.prepareStatement("INSERT INTO keskusdivari.asiakas (ktunnus, salasana, nimi, osoite, puhnro, email) VALUES (?, ?, ?, ?, ?, ?)");
             pstmt.clearParameters();
             pstmt.setString(1, uid);
             pstmt.setString(2, password);
