@@ -27,7 +27,7 @@ class ConnectDB {
             System.out.println("Yhteyden sulkeminen tietokantaan ei onnistunut. Lopetetaan ohjelman suoritus.");
         }
         finally {
-            System.out.println("Connection closed.");
+//            System.out.println("Connection closed.");
         }
     }
 
@@ -62,27 +62,37 @@ class ConnectDB {
     static void doSearchByColumn(String columnName, String paramName) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
-        System.out.println(columnName + " " + paramName);
+//        System.out.println(columnName + " " + paramName);
 
         try {
             PreparedStatement pstmt;
             Integer rowCount = 0;
-            String sql = "SELECT * FROM keskusdivari.teos WHERE " + columnName + " ILIKE ?";
+            //String sql = "SELECT * FROM keskusdivari.teos WHERE " + columnName + " ILIKE ?";
+            String sql = "SELECT keskusdivari.teos.nimi, keskusdivari.teos.tekija, keskusdivari.nide.hinta, keskusdivari.divari.nimi AS divari ";
+            sql += "FROM keskusdivari.teos ";
+            sql += "LEFT JOIN keskusdivari.nide ON keskusdivari.teos.teos_id = keskusdivari.nide.teos_id ";
+            sql += "LEFT JOIN keskusdivari.divari ON keskusdivari.nide.divari_id = keskusdivari.divari.divari_id ";
+            sql += "WHERE keskusdivari.teos." + columnName + " ILIKE ? ;";
             pstmt = con.prepareStatement(sql);
             pstmt.clearParameters();
             pstmt.setString(1, "%" + paramName + "%");
             ResultSet rset = pstmt.executeQuery();
             while (rset.next()) {
-                System.out.println("Tämä tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
-                System.out.println("Teos on nimeltään " + rset.getString("nimi"));
-                ResultSetMetaData metadata = rset.getMetaData();
-                StringBuilder row = new StringBuilder();
-                for (int i = 1; i <= metadata.getColumnCount(); i++) {
-                    row.append(rset.getString(i)).append(", ");
-                }
-                System.out.println("Täydet tiedot: " + row);
+//                System.out.println("Tämä tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
+                System.out.println("------------------------");
+                System.out.println("NIMI: " + rset.getString("nimi"));
+                System.out.println("KIRJAILIJA: " + rset.getString("tekija"));
+                System.out.println("HINTA: " + rset.getFloat("hinta"));
+                System.out.println("DIVARI: " + rset.getString("divari"));
+//                ResultSetMetaData metadata = rset.getMetaData();
+//                StringBuilder row = new StringBuilder();
+//                for (int i = 1; i <= metadata.getColumnCount(); i++) {
+//                    row.append(rset.getString(i)).append(", ");
+//                }
+//                System.out.println("Täydet tiedot: " + row);
                 rowCount++;
             }
+            System.out.println("------------------------");
             System.out.println("Tuloksia: " + rowCount + " kappaletta");
             pstmt.close();  // sulkee automaattisesti myös tulosjoukon rset
         } catch (SQLException err) {
