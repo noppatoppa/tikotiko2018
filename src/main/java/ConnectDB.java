@@ -37,7 +37,7 @@ class ConnectDB {
 
         try {
             Statement stmt = con.createStatement();
-            ResultSet rset = stmt.executeQuery("SELECT *" + "FROM teos");
+            ResultSet rset = stmt.executeQuery("SELECT *" + "FROM keskusdivari.teos");
             if (rset.next()) {
                 System.out.println("Teoksia löytyi: " + rset.getInt(1));
                 System.out.println("Ensimmäinen teos on nimeltään " + rset.getString("nimi"));
@@ -65,7 +65,7 @@ class ConnectDB {
 
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("SELECT * FROM teos WHERE nimi ILIKE ?");
+            pstmt = con.prepareStatement("SELECT * FROM keskusdivari.teos WHERE nimi ILIKE ?");
             pstmt.clearParameters();
             pstmt.setString(1, "%" + paramName + "%");
             ResultSet rset = pstmt.executeQuery();
@@ -98,7 +98,7 @@ class ConnectDB {
 
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("SELECT salasana FROM asiakas WHERE ktunnus = ?");
+            pstmt = con.prepareStatement("SELECT salasana FROM keskusdivari.asiakas WHERE ktunnus = ?");
             pstmt.clearParameters();
             pstmt.setString(1, username);
             ResultSet rset = pstmt.executeQuery();
@@ -120,14 +120,31 @@ class ConnectDB {
 
     static void addUser(String[] args) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        String name, uid, password, address, phone, email = "";
+        name = args[0]; uid = args[1]; password = args[2]; address = args[3]; phone = args[4]; email = args[5];
         Connection con = connect(params);
-        String password = "";
+
+
+        /* TODO:
+            - formulate prepared statements
+         */
 
         try {
-            for (int i = 0; i < args.length; i++) {
-                System.out.println(i + " " + args[i]);
-            }
-        } catch ( Exception err ) {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("INSERT INTO keskusdivari.asiakas (ktunnus, salasana, nimi, osoite, puhnro, email) VALUES (?, ?, ?, ?, ?, ?)");
+            pstmt.clearParameters();
+            pstmt.setString(1, uid);
+            pstmt.setString(2, password);
+            pstmt.setString(3, name);
+            pstmt.setString(4, address);
+            pstmt.setString(5, phone);
+            pstmt.setString(6, email);
+
+            int resultsNum = pstmt.executeUpdate();
+            System.out.println("Rows inserted: " + resultsNum);
+            pstmt.close();  // sulkee automaattisesti myös tulosjoukon rset
+
+        } catch ( SQLException err ) {
             System.out.println("Shit went down, yo " + err.getMessage());
         } finally {
             closeConnection(con);
