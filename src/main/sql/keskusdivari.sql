@@ -10,6 +10,13 @@ CREATE TABLE keskusdivari.teos(
     paino       INTEGER         NOT NULL
 );
 
+CREATE TABLE keskusdivari.divari(
+    divari_id           SERIAL          PRIMARY KEY,
+    nimi                TEXT            NOT NULL,
+    osoite              TEXT            NOT NULL,
+    webosoite           TEXT            NOT NULL
+);
+
 CREATE TABLE keskusdivari.nide(
     nide_id             SERIAL,
     sisaanosto_hinta    REAL            NOT NULL,
@@ -21,19 +28,14 @@ CREATE TABLE keskusdivari.nide(
     FOREIGN KEY (divari_id) REFERENCES keskusdivari.divari (divari_id)
 );
 
-CREATE TABLE keskusdivari.divari(
-    divari_id           SERIAL          PRIMARY KEY,
-    nimi                TEXT            NOT NULL,
-    osoite              TEXT            NOT NULL,
-    webosoite           TEXT            NOT NULL
-);
-
 CREATE TABLE keskusdivari.asiakas(
     asiakas_id          SERIAL          PRIMARY KEY,
     nimi                TEXT            NOT NULL,
     osoite              TEXT            NOT NULL,
     puhnro              TEXT            NOT NULL,
-    email               TEXT            NOT NULL
+    email               TEXT            NOT NULL,
+    ktunnus             VARCHAR(20)     NOT NULL,
+    salasana            VARCHAR(20)     NOT NULL
 );
 
 CREATE TABLE keskusdivari.tilaus(
