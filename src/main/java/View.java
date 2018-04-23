@@ -9,10 +9,10 @@ class View {
 
     static int mainMenuView () {
         /* Show basic functions of registered user */
-        System.out.println("Please select function");
-        System.out.println("1) show all volumes");
-        System.out.println("2) search by attribute");
-        System.out.println("3) logout");
+        System.out.println("Valitse toiminto");
+        System.out.println("1) Näytä kaikki teokset");
+        System.out.println("2) Hae kirjaa");
+        System.out.println("3) Kirjaudu ulos");
         Scanner user_input = new Scanner(System.in);
         String selection = user_input.next();
 
@@ -22,11 +22,11 @@ class View {
 
     static int searchMenuView () {
         /* Show search menu */
-        System.out.println("Select search:");
-        System.out.println("1) search by name");
-        System.out.println("2) search by author");
-        System.out.println("3) search by type");
-        System.out.println("4) search by class");
+        System.out.println("Valitse toiminto:");
+        System.out.println("1) Etsi kirjan nimellä");
+        System.out.println("2) Etsi kirjailijalla");
+        System.out.println("3) Etsi tyypillä");
+        System.out.println("4) Etsi lajilla");
         Scanner user_input = new Scanner(System.in);
         String selection = user_input.nextLine();
 
@@ -35,10 +35,10 @@ class View {
 
     static int userLogInView () {
         /* Let's show a prompt for the user */
-        System.out.println("Hello and welcome:");
-        System.out.println("1) for new Customer");
-        System.out.println("2) for returning Customer");
-        System.out.println("3) for logging out");
+        System.out.println("Tervetuloa:");
+        System.out.println("1) Uusi asiakas");
+        System.out.println("2) Palaava asiakas");
+        System.out.println("3) Lopeta käyttö");
         Scanner user_input = new Scanner(System.in);
         String selection = user_input.next();
 
@@ -48,10 +48,10 @@ class View {
 
     static int adminMenuView () {
         /* Show admin functions */
-        System.out.println("Select admin action");
-        System.out.println("1) add new book");
-        System.out.println("2) add new item(s)");
-        System.out.println("3) logout");
+        System.out.println("Valitse ylläpitotoiminto");
+        System.out.println("1) Lisää kirja");
+        System.out.println("2) Lisää niteitä");
+        System.out.println("3) Kirjaudu ulos");
         Scanner user_input = new Scanner(System.in);
         String selection = user_input.next();
         

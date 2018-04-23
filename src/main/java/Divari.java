@@ -47,7 +47,7 @@ public class Divari {
                         cont = false;
                         break;
                     default:
-                        System.out.println("Not valid input, sorry");
+                        System.out.println("Valitettavasti valintaasi ei löydy, kokeile jotakin toista");
                 }
             } catch (Exception e) {
                 System.out.println("Invalid input: " + e);
@@ -67,16 +67,16 @@ public class Divari {
                 /* Logging in */
                 switch (selection) {
                   case 1:
-                    System.out.println("Please give some basic information:");
-                    System.out.println("First your name:");
+                    System.out.println("Anna perustietoja itsestäsi:");
+                    System.out.println("Nimi:");
                         String name = user_input.nextLine();
-                    System.out.println("Select username:");
+                    System.out.println("Käyttäjätunnus:");
                         String uid = user_input.nextLine();
-                    System.out.println("Set a password:");
+                    System.out.println("Aseta salasana:");
                         String password = user_input.nextLine();
-                    System.out.println("Address:");
+                    System.out.println("Osoite:");
                         String address = user_input.nextLine();
-                    System.out.println("Phone number (+358...):");
+                    System.out.println("Puhelinnumero (+358...):");
                         String phoneNumber = user_input.nextLine();
                     System.out.println("Email:");
                         String email = user_input.nextLine();
@@ -86,9 +86,9 @@ public class Divari {
                     break;
                 case 2:
                     String[] authInfo = new String[2];
-                    System.out.println("Please give username: ");
+                    System.out.println("Syötä käyttäjätunnus: ");
                     authInfo[0] = user_input.nextLine();
-                    System.out.println("Please give password: ");
+                    System.out.println("Salasana: ");
                     authInfo[1] = user_input.nextLine();
                     customer.signIn(authInfo);
                     break;
@@ -97,7 +97,7 @@ public class Divari {
                     cont = false;
                     break;
                 default:
-                    System.out.println("Not a valid selection, sorry.");
+                    System.out.println("Valitettavasti valintaasi ei löydy, kokeile jotakin toista.");
                     break;
                 }
             } catch (NumberFormatException err) {
@@ -111,20 +111,18 @@ public class Divari {
                 Integer selection = View.mainMenuView();
                 switch (selection) {
                   case 1:
-                      System.out.println("Making a search: ");
                       ConnectDB.doSearch();
                       break;
                   case 2:
                       searchBooks();
-                      //ConnectDB.doSearchByName(name);
                       break;
                   case 3:
-                      System.out.println("Logging out");
+                      System.out.println("Kirjaudu ulos");
                       customer.logOut();
                       cont = false;
                       break;
                   default:
-                      System.out.println("Not a valid selection, sorry.");
+                      System.out.println("Valitettavasti valintaasi ei löydy, kokeile jotakin toista.");
                       break;
                   }
             } catch (NumberFormatException err) {
@@ -139,53 +137,53 @@ public class Divari {
                 Integer selection = View.adminMenuView();
                 switch (selection) {
                   case 1:
-                      System.out.println("Please enter the book's ISBN number:");
+                      System.out.println("Syötä ISBN-numero:");
                       isbn = user_input.nextLine();
                       if (ConnectDB.bookExists(isbn) != -1) {
-                          System.out.println("A book record with the ISBN number you entered already exists.");
+                          System.out.println("Kyseisellä ISBN-numerolla löytyy jo teos.");
                           break;
                       }
 
-                      System.out.println("Book title:");
+                      System.out.println("Kirjan nimi:");
                           String title = user_input.nextLine();
-                      System.out.println("Book author:");
+                      System.out.println("Kirjailijan nimi:");
                           String author = user_input.nextLine();
-                      System.out.println("Year published:");
+                      System.out.println("Julkaisuvuosi:");
                           String year = user_input.nextLine();
-                      System.out.println("Book genre:");
+                      System.out.println("Luokka:");
                           String genre = user_input.nextLine();
-                      System.out.println("Book type:");
+                      System.out.println("Tyyppi:");
                           String type = user_input.nextLine();
 
                       String bookData[] = {isbn, author, title, year, genre, type};
                       ConnectDB.addBook(bookData);
                       break;
                   case 2:
-                      System.out.println("Please enter the book's ISBN number:");
+                      System.out.println("Syötä kirjan ISBN-numero:");
                       isbn = user_input.nextLine();
                       int bookID = ConnectDB.bookExists(isbn);
                       if (bookID == -1) {
-                          System.out.println("A book record with the ISBN number you entered does not exist, please try again.");
+                          System.out.println("Kyseisellä ISBN-numerolla löytyy jo teos, yritä uudelleen.");
                           break;
                       }
 
-                      System.out.println("Sale price:");
+                      System.out.println("Myyntihinta:");
                           String salePrice = user_input.nextLine();
-                      System.out.println("Purchase price:");
+                      System.out.println("Ostohinta:");
                           String purchasePrice = user_input.nextLine();
-                      System.out.println("Weight:");
+                      System.out.println("Paino:");
                           String weight = user_input.nextLine();
 
                       String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice, weight};
                       ConnectDB.addItem(itemData);
                       break;
                   case 3:
-                      System.out.println("Logging out");
+                      System.out.println("Kirjaudutaan ulos");
                       customer.logOut();
                       cont = false;
                       break;
                   default:
-                      System.out.println("Not a valid selection, sorry.");
+                      System.out.println("Valitettavasti valintaasi ei löydy, kokeile jotakin toista.");
                       break;
                 }
             } catch ( NumberFormatException err ) {
