@@ -11,12 +11,25 @@ class View {
         /* Show basic functions of registered user */
         System.out.println("Please select function");
         System.out.println("1) show all volumes");
-        System.out.println("2) search by name");
+        System.out.println("2) search by attribute");
         System.out.println("3) logout");
         Scanner user_input = new Scanner(System.in);
         String selection = user_input.next();
 
         //System.out.println("Selection was: " + selection);
+        return Integer.parseInt(selection);
+    }
+
+    static int searchMenuView () {
+        /* Show search menu */
+        System.out.println("Select search:");
+        System.out.println("1) search by name");
+        System.out.println("2) search by author");
+        System.out.println("3) search by type");
+        System.out.println("4) search by class");
+        Scanner user_input = new Scanner(System.in);
+        String selection = user_input.nextLine();
+
         return Integer.parseInt(selection);
     }
 

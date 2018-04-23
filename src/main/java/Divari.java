@@ -15,6 +15,46 @@ public class Divari {
         - Schema-based admin authentication
      */
 
+    private static void searchBooks() {
+        Scanner user_input = new Scanner(System.in);
+        Integer selection = View.searchMenuView();
+        boolean cont = true;
+        while (cont) {
+            try {
+                switch (selection) {
+                    case 1:
+                        System.out.println("Hae teosten nimistä: ");
+                        String name = user_input.nextLine();
+                        ConnectDB.doSearchByColumn("nimi", name);
+                        cont = false;
+                        break;
+                    case 2:
+                        System.out.println("Hae kirjailijoista: ");
+                        String author = user_input.nextLine();
+                        ConnectDB.doSearchByColumn("tekija", author);
+                        cont = false;
+                        break;
+                    case 3:
+                        System.out.println("Hae tyypillä: ");
+                        String type = user_input.nextLine();
+                        ConnectDB.doSearchByColumn("tyyppi", type);
+                        cont = false;
+                        break;
+                    case 4:
+                        System.out.println("Hae luokalla: ");
+                        String bookClass = user_input.nextLine();
+                        ConnectDB.doSearchByColumn("luokka", bookClass);
+                        cont = false;
+                        break;
+                    default:
+                        System.out.println("Not valid input, sorry");
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid input: " + e);
+            }
+        }
+    }
+
     public static void main (String args[]) {
 
         boolean cont = true;
@@ -75,9 +115,8 @@ public class Divari {
                       ConnectDB.doSearch();
                       break;
                   case 2:
-                      System.out.println("Give title to search: ");
-                      String name = user_input.nextLine();
-                      ConnectDB.doSearchByName(name);
+                      searchBooks();
+                      //ConnectDB.doSearchByName(name);
                       break;
                   case 3:
                       System.out.println("Logging out");

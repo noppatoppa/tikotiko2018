@@ -36,20 +36,20 @@ class ConnectDB {
         Connection con = connect(params);
 
         try {
+            Integer rowCount = 0;
             Statement stmt = con.createStatement();
             ResultSet rset = stmt.executeQuery("SELECT *" + "FROM keskusdivari.teos");
-            if (rset.next()) {
-                System.out.println("Teoksia löytyi: " + rset.getInt(1));
-                System.out.println("Ensimmäinen teos on nimeltään " + rset.getString("nimi"));
+            while (rset.next()) {
+                System.out.println("Teos on nimeltään " + rset.getString("nimi"));
                 ResultSetMetaData metadata = rset.getMetaData();
                 StringBuilder row = new StringBuilder();
                 for (int i = 1; i <= metadata.getColumnCount(); i++) {
                     row.append(rset.getString(i)).append(", ");
                 }
-                System.out.println("Ja sitten: " + row);
-            } else {
-                System.out.println("Ei löytynyt mitään!");
+                System.out.println("Täydet tiedot: " + row);
+                rowCount++;
             }
+            System.out.println("Tuloksia: " + rowCount + " kappaletta");
             stmt.close();  // sulkee automaattisesti myös tulosjoukon rset
         } catch (SQLException err) {
             System.out.println("Shit went down, yo " + err.getMessage());
@@ -59,29 +59,31 @@ class ConnectDB {
         }
     }
 
-    static void doSearchByName(String paramName) {
+    static void doSearchByColumn(String columnName, String paramName) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
+        System.out.println(columnName + " " + paramName);
 
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("SELECT * FROM keskusdivari.teos WHERE nimi ILIKE ?");
+            Integer rowCount = 0;
+            String sql = "SELECT * FROM keskusdivari.teos WHERE " + columnName + " ILIKE ?";
+            pstmt = con.prepareStatement(sql);
             pstmt.clearParameters();
             pstmt.setString(1, "%" + paramName + "%");
             ResultSet rset = pstmt.executeQuery();
-            if (rset.next()) {
-                System.out.println("Tämä tulee prepared statementista hakusanalla: " + paramName);
-                System.out.println("Teoksia löytyi: " + rset.getInt(1));
-                System.out.println("Ensimmäinen teos on nimeltään " + rset.getString("nimi"));
+            while (rset.next()) {
+                System.out.println("Tämä tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
+                System.out.println("Teos on nimeltään " + rset.getString("nimi"));
                 ResultSetMetaData metadata = rset.getMetaData();
                 StringBuilder row = new StringBuilder();
                 for (int i = 1; i <= metadata.getColumnCount(); i++) {
                     row.append(rset.getString(i)).append(", ");
                 }
-                System.out.println("Ja sitten: " + row);
-            } else {
-                System.out.println("Ei löytynyt mitään!");
+                System.out.println("Täydet tiedot: " + row);
+                rowCount++;
             }
+            System.out.println("Tuloksia: " + rowCount + " kappaletta");
             pstmt.close();  // sulkee automaattisesti myös tulosjoukon rset
         } catch (SQLException err) {
             System.out.println("Shit went down, yo " + err.getMessage());
@@ -150,12 +152,12 @@ class ConnectDB {
             closeConnection(con);
         }
     }
-    
+
     // returns the id of the book if found, otherwise -1
     static int bookExists(String isbn) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
-        
+
         try {
             PreparedStatement pstmt;
             pstmt = con.prepareStatement("SELECT teos.teos_id FROM teos WHERE isbn = ?");
@@ -172,14 +174,14 @@ class ConnectDB {
         } finally {
             closeConnection(con);
         }
-        
+
         return -1;
     }
-    
+
     static void addBook(String[] args) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
-        
+
         try {
             PreparedStatement pstmt;
             pstmt = con.prepareStatement("INSERT INTO teos (isbn, tekija, nimi, vuosi, luokka, tyyppi) VALUES (?, ?, ?, ?, ?, ?)");
@@ -196,11 +198,11 @@ class ConnectDB {
             closeConnection(con);
         }
     }
-    
+
     static void addItem(String[] args) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
-        
+
         try {
             PreparedStatement pstmt;
             pstmt = con.prepareStatement("INSERT INTO myyntikappale (teos_id, myyntihinta, ostohinta, paino) VALUES (?, ?, ?, ?)");
