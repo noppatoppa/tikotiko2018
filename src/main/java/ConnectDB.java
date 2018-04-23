@@ -150,4 +150,69 @@ class ConnectDB {
             closeConnection(con);
         }
     }
+    
+    // returns the id of the book if found, otherwise -1
+    static int bookExists(String isbn) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        
+        try {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("SELECT teos.teos_id FROM teos WHERE isbn = ?");
+            pstmt.clearParameters();
+            pstmt.setString(1, isbn);
+            ResultSet rset = pstmt.executeQuery();
+            if (rset.next()) {
+                return rset.getInt("teos_id");
+            } else {
+                return -1;
+            }
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
+            closeConnection(con);
+        }
+        
+        return -1;
+    }
+    
+    static void addBook(String[] args) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        
+        try {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("INSERT INTO teos (isbn, tekija, nimi, vuosi, luokka, tyyppi) VALUES (?, ?, ?, ?, ?, ?)");
+            pstmt.setString(1, args[0]);
+            pstmt.setString(2, args[1]);
+            pstmt.setString(3, args[2]);
+            pstmt.setInt(4, Integer.parseInt(args[3]));
+            pstmt.setInt(5, Integer.parseInt(args[4]));
+            pstmt.setInt(6, Integer.parseInt(args[5]));
+            pstmt.executeUpdate();
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
+            closeConnection(con);
+        }
+    }
+    
+    static void addItem(String[] args) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        
+        try {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("INSERT INTO myyntikappale (teos_id, myyntihinta, ostohinta, paino) VALUES (?, ?, ?, ?)");
+            pstmt.setInt(1, Integer.parseInt(args[0]));
+            pstmt.setFloat(2, Float.parseFloat(args[1]));
+            pstmt.setFloat(3, Float.parseFloat(args[2]));
+            pstmt.setInt(4, Integer.parseInt(args[3]));
+            pstmt.executeUpdate();
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
+            closeConnection(con);
+        }
+    }
 }
