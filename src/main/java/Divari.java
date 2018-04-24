@@ -46,6 +46,38 @@ public class Divari {
                         ConnectDB.doSearchByColumn("luokka", bookClass);
                         cont = false;
                         break;
+                    case 5:
+                        System.out.println("Hae luokalla: ");
+                        String bookClassTot = user_input.nextLine();
+                        ConnectDB.searchAllByColumn(bookClassTot);
+                        cont = false;
+                        break;
+                    default:
+                        System.out.println("Valitettavasti valintaasi ei löydy, kokeile jotakin toista");
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid input: " + e);
+            }
+        }
+    }
+
+    public static void searchAllBooks() {
+        Scanner user_input = new Scanner(System.in);
+        Integer selection = View.searchAllMenuView();
+        boolean cont = true;
+        while (cont) {
+            try {
+                switch (selection) {
+                    case 1:
+                        ConnectDB.doSearch();
+                        cont = false;
+                        break;
+                    case 2:
+                        System.out.println("Hae luokalla: ");
+                        String bookClassTot = user_input.nextLine();
+                        ConnectDB.searchAllByColumn(bookClassTot);
+                        cont = false;
+                        break;
                     default:
                         System.out.println("Valitettavasti valintaasi ei löydy, kokeile jotakin toista");
                 }
@@ -111,7 +143,7 @@ public class Divari {
                 Integer selection = View.mainMenuView();
                 switch (selection) {
                   case 1:
-                      ConnectDB.doSearch();
+                      searchAllBooks();
                       break;
                   case 2:
                       searchBooks();

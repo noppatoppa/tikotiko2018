@@ -27,6 +27,16 @@ class View {
         System.out.println("2) Etsi kirjailijalla");
         System.out.println("3) Etsi tyypillä");
         System.out.println("4) Etsi lajilla");
+        System.out.println("5) Etsi kaikki teokset luokasta");
+        Scanner user_input = new Scanner(System.in);
+        String selection = user_input.nextLine();
+
+        return Integer.parseInt(selection);
+    }
+
+    static int searchAllMenuView () {
+        System.out.println("1) Etsi kaikki teokset");
+        System.out.println("2) Etsi kaikki teokset luokasta");
         Scanner user_input = new Scanner(System.in);
         String selection = user_input.nextLine();
 
