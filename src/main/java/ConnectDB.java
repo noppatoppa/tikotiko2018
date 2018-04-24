@@ -31,7 +31,7 @@ class ConnectDB {
         }
     }
 
-    static void doSearch() {
+    static void searchAll() {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
 
@@ -100,7 +100,8 @@ class ConnectDB {
             PreparedStatement pstmt;
             Integer rowCount = 0;
             //String sql = "SELECT * FROM keskusdivari.teos WHERE " + columnName + " ILIKE ?";
-            String sql = "SELECT keskusdivari.teos.nimi, keskusdivari.teos.tekija, keskusdivari.nide.hinta, keskusdivari.divari.nimi AS divari ";
+            String sql = "SELECT keskusdivari.nide.nide_id, keskusdivari.teos.nimi,";
+            sql += "keskusdivari.teos.tekija, keskusdivari.nide.hinta, keskusdivari.divari.nimi AS divari ";
             sql += "FROM keskusdivari.teos ";
             sql += "LEFT JOIN keskusdivari.nide ON keskusdivari.teos.teos_id = keskusdivari.nide.teos_id ";
             sql += "LEFT JOIN keskusdivari.divari ON keskusdivari.nide.divari_id = keskusdivari.divari.divari_id ";
@@ -112,6 +113,7 @@ class ConnectDB {
             while (rset.next()) {
 //                System.out.println("Tämä tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
                 System.out.println("------------------------");
+                System.out.println("ID: " + rset.getInt("nide_id"));
                 System.out.println("NIMI: " + rset.getString("nimi"));
                 System.out.println("KIRJAILIJA: " + rset.getString("tekija"));
                 System.out.println("HINTA: " + rset.getFloat("hinta"));

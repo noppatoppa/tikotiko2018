@@ -1,7 +1,3 @@
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
-
-import java.lang.ref.SoftReference;
-import java.sql.Connection;
 import java.util.Scanner;
 
 public class Divari {
@@ -69,7 +65,7 @@ public class Divari {
             try {
                 switch (selection) {
                     case 1:
-                        ConnectDB.doSearch();
+                        ConnectDB.searchAll();
                         cont = false;
                         break;
                     case 2:
