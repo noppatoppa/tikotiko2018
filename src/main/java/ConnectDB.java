@@ -8,7 +8,7 @@ class ConnectDB {
     private static final String PROTOKOLLA = "jdbc:postgresql:";
     private static final String PALVELIN = "localhost";
     private static final String PORTTI = "5432";
-    private static final String TIETOKANTA = "postgres";  // tähän oma käyttäjätunnus
+    private static final String TIETOKANTA = "divari";  // tähän oma käyttäjätunnus
     private static final String KAYTTAJA = "postgres";  // tähän oma käyttäjätunnus
     private static final String SALASANA = "salakala";  // tähän tietokannan salasana
 
@@ -81,8 +81,8 @@ class ConnectDB {
             if (rset.next()) {
                 do {
                     System.out.println("LUOKKA: " + rset.getString("luokka"));
-                    System.out.println("KOKONAISHINTA: " + rset.getInt("sum"));
-                    System.out.println("KESKIHINTA: " + rset.getInt("avg"));
+                    System.out.println(String.format("KOKONAISHINTA: %.2f euroa", rset.getFloat("sum")));
+                    System.out.println(String.format("KESKIHINTA: %.2f euroa", rset.getFloat("avg")));
                     System.out.println("------------------------");
                 } while (rset.next());
             }
@@ -121,7 +121,7 @@ class ConnectDB {
                 System.out.println("Hakutulos " + (rowCount + 1));
                 System.out.println("NIMI: " + rset.getString("nimi"));
                 System.out.println("KIRJAILIJA: " + rset.getString("tekija"));
-                System.out.println("HINTA: " + rset.getFloat("hinta"));
+                System.out.println(String.format("HINTA: %.2f euroa", rset.getFloat("hinta")));
                 System.out.println("DIVARI: " + rset.getString("divari"));
 //                ResultSetMetaData metadata = rset.getMetaData();
 //                StringBuilder row = new StringBuilder();
@@ -315,6 +315,7 @@ class ConnectDB {
             pstmt.clearParameters();
             pstmt.setInt(1, customer.userId());
             ResultSet rset = pstmt.executeQuery();
+            System.out.println("Varatut niteesi:");
             while (rset.next()) {
 //                System.out.println("T�m� tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
                 sum = rset.getFloat("summa");
@@ -322,7 +323,7 @@ class ConnectDB {
                 System.out.println("------------------------");
                 System.out.println("NIMI: " + rset.getString("nimi"));
                 System.out.println("KIRJAILIJA: " + rset.getString("tekija"));
-                System.out.println("HINTA: " + rset.getFloat("hinta"));
+                System.out.println(String.format("HINTA: %.2f euroa", rset.getFloat("hinta")));
                 System.out.println("DIVARI: " + rset.getString("divari"));
 //                ResultSetMetaData metadata = rset.getMetaData();
 //                StringBuilder row = new StringBuilder();
@@ -332,7 +333,7 @@ class ConnectDB {
 //                System.out.println("T�ydet tiedot: " + row);
             }
             System.out.println("------------------------");
-            System.out.println("Tilauksen yhteishinta: " + sum + " euroa");
+            System.out.println(String.format("Tilauksen yhteishinta: %.2f", sum) + " euroa");
             System.out.println("Tilauksen yhteispaino: " + totalWeight + " grammaa");
             pstmt.close();  // sulkee automaattisesti my�s tulosjoukon rset
         } catch (SQLException err) {
