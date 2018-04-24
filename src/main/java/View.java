@@ -12,7 +12,8 @@ class View {
         System.out.println("Valitse toiminto");
         System.out.println("1) Näytä kaikki teokset");
         System.out.println("2) Hae kirjaa");
-        System.out.println("3) Kirjaudu ulos");
+        System.out.println("3) Tarkastele tilausta");
+        System.out.println("4) Kirjaudu ulos");
         Scanner user_input = new Scanner(System.in);
         String selection = user_input.next();
 

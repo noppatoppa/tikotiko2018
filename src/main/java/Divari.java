@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Divari {
 
@@ -11,9 +13,10 @@ public class Divari {
         - Schema-based admin authentication
      */
 
-    private static void searchBooks() {
+    private static List<Integer> searchBooks() {
         Scanner user_input = new Scanner(System.in);
         Integer selection = View.searchMenuView();
+        List<Integer> idList = null;
         boolean cont = true;
         while (cont) {
             try {
@@ -21,25 +24,25 @@ public class Divari {
                     case 1:
                         System.out.println("Hae teosten nimist√§: ");
                         String name = user_input.nextLine();
-                        ConnectDB.doSearchByColumn("nimi", name);
+                        idList = ConnectDB.doSearchByColumn("nimi", name);
                         cont = false;
                         break;
                     case 2:
                         System.out.println("Hae kirjailijoista: ");
                         String author = user_input.nextLine();
-                        ConnectDB.doSearchByColumn("tekija", author);
+                        idList = ConnectDB.doSearchByColumn("tekija", author);
                         cont = false;
                         break;
                     case 3:
                         System.out.println("Hae tyypill√§: ");
                         String type = user_input.nextLine();
-                        ConnectDB.doSearchByColumn("tyyppi", type);
+                        idList = ConnectDB.doSearchByColumn("tyyppi", type);
                         cont = false;
                         break;
                     case 4:
                         System.out.println("Hae luokalla: ");
                         String bookClass = user_input.nextLine();
-                        ConnectDB.doSearchByColumn("luokka", bookClass);
+                        idList = ConnectDB.doSearchByColumn("luokka", bookClass);
                         cont = false;
                         break;
                     case 5:
@@ -55,6 +58,8 @@ public class Divari {
                 System.out.println("Invalid input: " + e);
             }
         }
+        
+        return idList;
     }
 
     public static void searchAllBooks() {
@@ -143,9 +148,23 @@ public class Divari {
                       searchAllBooks();
                       break;
                   case 2:
-                      searchBooks();
+                      List<Integer> idList = searchBooks();
+                      
+                      if (idList != null) {
+                          System.out.println("Lis‰‰ haluamasi nide tilaukseen syˆtt‰m‰ll‰ sen j‰rjestysnumeron tai \"0\" ilman lainausmerkkej‰ peruaksesi valinnan.");
+                          int row = Integer.parseInt(user_input.nextLine());
+                          
+                          if (row > 0) {
+                              ConnectDB.addOrder(customer, idList.get(row - 1));
+                              System.out.println("Nide lis‰tty onnistuneesti tilaukseesi.");
+                              System.out.println();
+                          }
+                      }     
                       break;
                   case 3:
+                      ConnectDB.getActiveOrders(customer);
+                      break;
+                  case 4:
                       System.out.println("Kirjaudu ulos");
                       customer.logOut();
                       cont = false;
@@ -168,29 +187,29 @@ public class Divari {
                   case 1:
                       System.out.println("Sy√∂t√§ ISBN-numero:");
                       isbn = user_input.nextLine();
-                      if (ConnectDB.bookExists(isbn) != -1) {
+                      if (ConnectDB.getBookByIsbn(isbn) != -1) {
                           System.out.println("Kyseisell√§ ISBN-numerolla l√∂ytyy jo teos.");
                           break;
                       }
 
                       System.out.println("Kirjan nimi:");
-                          String title = user_input.nextLine();
-                      System.out.println("Kirjailijan nimi:");
-                          String author = user_input.nextLine();
-                      System.out.println("Julkaisuvuosi:");
-                          String year = user_input.nextLine();
-                      System.out.println("Luokka:");
-                          String genre = user_input.nextLine();
-                      System.out.println("Tyyppi:");
-                          String type = user_input.nextLine();
+                        String title = user_input.nextLine();
+                      System.out.println("Kirjan tekij‰:");
+                        String author = user_input.nextLine();
+                      System.out.println("Kirjan luokka:");
+                        String genre = user_input.nextLine();
+                      System.out.println("Kirjan tyyppi:");
+                        String type = user_input.nextLine();
+                      System.out.println("Paino:");
+                        String weight = user_input.nextLine();
 
-                      String bookData[] = {isbn, author, title, year, genre, type};
+                      String bookData[] = {isbn, author, title, genre, type, weight};
                       ConnectDB.addBook(bookData);
                       break;
                   case 2:
                       System.out.println("Sy√∂t√§ kirjan ISBN-numero:");
                       isbn = user_input.nextLine();
-                      int bookID = ConnectDB.bookExists(isbn);
+                      int bookID = ConnectDB.getBookByIsbn(isbn);
                       if (bookID == -1) {
                           System.out.println("Kyseisell√§ ISBN-numerolla l√∂ytyy jo teos, yrit√§ uudelleen.");
                           break;
@@ -200,10 +219,8 @@ public class Divari {
                           String salePrice = user_input.nextLine();
                       System.out.println("Ostohinta:");
                           String purchasePrice = user_input.nextLine();
-                      System.out.println("Paino:");
-                          String weight = user_input.nextLine();
 
-                      String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice, weight};
+                      String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice};
                       ConnectDB.addItem(itemData);
                       break;
                   case 3:

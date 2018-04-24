@@ -1,6 +1,7 @@
 import java.sql.SQLException;
 
 public class Customer implements Users {
+    private int userId = 0;
     private boolean signedIn = false;
     private boolean isUserAdmin = false;
 
@@ -12,7 +13,9 @@ public class Customer implements Users {
         System.out.println("Username: " + auth[0] + ", password " + auth[1]);
         String password = "";
         try {
-            password = ConnectDB.getAuthFromDb(auth[0]);
+            String[] data = ConnectDB.getAuthFromDb(auth[0]);
+            password = data[0];
+            userId = Integer.parseInt(data[1]);
         } catch (Exception err) {
             System.out.println("Problem occurred getting auth: " + err);
         }
@@ -41,5 +44,9 @@ public class Customer implements Users {
 
     public boolean isAdmin() {
         return this.isUserAdmin;
+    }
+    
+    public int userId() {
+        return this.userId;
     }
 }

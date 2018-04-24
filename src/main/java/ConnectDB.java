@@ -1,11 +1,14 @@
 import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 class ConnectDB {
 
     private static final String PROTOKOLLA = "jdbc:postgresql:";
     private static final String PALVELIN = "localhost";
     private static final String PORTTI = "5432";
-    private static final String TIETOKANTA = "divari";  // tähän oma käyttäjätunnus
+    private static final String TIETOKANTA = "postgres";  // tähän oma käyttäjätunnus
     private static final String KAYTTAJA = "postgres";  // tähän oma käyttäjätunnus
     private static final String SALASANA = "salakala";  // tähän tietokannan salasana
 
@@ -91,10 +94,12 @@ class ConnectDB {
         }
     }
 
-    static void doSearchByColumn(String columnName, String paramName) {
+    static List<Integer> doSearchByColumn(String columnName, String paramName) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
 //        System.out.println(columnName + " " + paramName);
+
+        List<Integer> idList = new ArrayList<Integer>();
 
         try {
             PreparedStatement pstmt;
@@ -111,9 +116,9 @@ class ConnectDB {
             pstmt.setString(1, "%" + paramName + "%");
             ResultSet rset = pstmt.executeQuery();
             while (rset.next()) {
-//                System.out.println("Tämä tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
+//                System.out.println("T�m� tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
                 System.out.println("------------------------");
-                System.out.println("ID: " + rset.getInt("nide_id"));
+                System.out.println("Hakutulos " + (rowCount + 1));
                 System.out.println("NIMI: " + rset.getString("nimi"));
                 System.out.println("KIRJAILIJA: " + rset.getString("tekija"));
                 System.out.println("HINTA: " + rset.getFloat("hinta"));
@@ -123,36 +128,42 @@ class ConnectDB {
 //                for (int i = 1; i <= metadata.getColumnCount(); i++) {
 //                    row.append(rset.getString(i)).append(", ");
 //                }
-//                System.out.println("Täydet tiedot: " + row);
+//                System.out.println("T�ydet tiedot: " + row);
+                idList.add(rset.getInt("nide_id"));
                 rowCount++;
             }
             System.out.println("------------------------");
             System.out.println("Tuloksia: " + rowCount + " kappaletta");
-            pstmt.close();  // sulkee automaattisesti myös tulosjoukon rset
+            pstmt.close();  // sulkee automaattisesti my�s tulosjoukon rset
         } catch (SQLException err) {
             System.out.println("Shit went down, yo " + err.getMessage());
         }
         finally {
             closeConnection(con);
         }
+        
+        return idList;
     }
 
-    static String getAuthFromDb(String username) {
+    // returns an array where 0 = password, 1 = user id on successful auth
+    static String[] getAuthFromDb(String username) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
-        String password = "";
+        String[] authData = new String[2];
 
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("SELECT salasana FROM keskusdivari.asiakas WHERE ktunnus = ?");
+            pstmt = con.prepareStatement("SELECT salasana, asiakas_id FROM keskusdivari.asiakas WHERE ktunnus = ?");
             pstmt.clearParameters();
             pstmt.setString(1, username);
             ResultSet rset = pstmt.executeQuery();
             if (rset.next()) {
-                password = rset.getString("salasana");
+                authData[0] = rset.getString("salasana");
+                authData[1] = Integer.toString(rset.getInt("asiakas_id"));
             } else {
                 System.out.println("Ei löytynyt mitään!");
-                password = null;
+                authData[0] = null;
+                authData[1] = null;
             }
             pstmt.close();  // sulkee automaattisesti myös tulosjoukon rset
         } catch (SQLException err) {
@@ -161,7 +172,7 @@ class ConnectDB {
         finally {
             closeConnection(con);
         }
-        return password;
+        return authData;
     }
 
     static void addUser(String[] args) {
@@ -198,13 +209,13 @@ class ConnectDB {
     }
 
     // returns the id of the book if found, otherwise -1
-    static int bookExists(String isbn) {
+    static int getBookByIsbn(String isbn) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
-
+        
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("SELECT teos.teos_id FROM teos WHERE isbn = ?");
+            pstmt = con.prepareStatement("SELECT keskusdivari.teos.teos_id FROM teos WHERE isbn = ?");
             pstmt.clearParameters();
             pstmt.setString(1, isbn);
             ResultSet rset = pstmt.executeQuery();
@@ -218,22 +229,22 @@ class ConnectDB {
         } finally {
             closeConnection(con);
         }
-
+        
         return -1;
     }
-
+    
     static void addBook(String[] args) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
-
+        
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("INSERT INTO teos (isbn, tekija, nimi, vuosi, luokka, tyyppi) VALUES (?, ?, ?, ?, ?, ?)");
+            pstmt = con.prepareStatement("INSERT INTO keskusdivari.teos (isbn, tekija, nimi, luokka, tyyppi, paino) VALUES (?, ?, ?, ?, ?, ?)");
             pstmt.setString(1, args[0]);
             pstmt.setString(2, args[1]);
             pstmt.setString(3, args[2]);
-            pstmt.setInt(4, Integer.parseInt(args[3]));
-            pstmt.setInt(5, Integer.parseInt(args[4]));
+            pstmt.setString(4, args[2]);
+            pstmt.setString(5, args[2]);
             pstmt.setInt(6, Integer.parseInt(args[5]));
             pstmt.executeUpdate();
         } catch ( Exception err ) {
@@ -242,22 +253,92 @@ class ConnectDB {
             closeConnection(con);
         }
     }
-
+    
     static void addItem(String[] args) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        
+        try {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("INSERT INTO keskusdivari.nide (teos_id, hinta, sisaanosto_hinta, divari_id) VALUES (?, ?, ?, ?)");
+            pstmt.setInt(1, Integer.parseInt(args[0]));
+            pstmt.setFloat(2, Float.parseFloat(args[1]));
+            pstmt.setFloat(3, Float.parseFloat(args[2]));
+            pstmt.setInt(4, 0);
+            pstmt.executeUpdate();
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
+            closeConnection(con);
+        }
+    }
+    
+    static void addOrder(Customer customer, int itemId) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        
+        try {
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement("INSERT INTO keskusdivari.tilaus (pvm, tila, asiakas_id, nide_id) VALUES (?, ?, ?, ?)");
+            
+            LocalDate curTime = LocalDate.now();
+            pstmt.setDate(1, new Date(curTime.getYear() - 1900, curTime.getMonthValue() - 1, curTime.getDayOfMonth()));
+            pstmt.setString(2, "varattu");
+            pstmt.setInt(3, customer.userId());
+            pstmt.setInt(4, itemId);
+            pstmt.executeUpdate();
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
+            closeConnection(con);
+        }
+    }
+    
+    static void getActiveOrders(Customer customer) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
 
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("INSERT INTO myyntikappale (teos_id, myyntihinta, ostohinta, paino) VALUES (?, ?, ?, ?)");
-            pstmt.setInt(1, Integer.parseInt(args[0]));
-            pstmt.setFloat(2, Float.parseFloat(args[1]));
-            pstmt.setFloat(3, Float.parseFloat(args[2]));
-            pstmt.setInt(4, Integer.parseInt(args[3]));
-            pstmt.executeUpdate();
-        } catch ( Exception err ) {
+            float sum = 0;
+            int totalWeight = 0;
+            String sql = "SELECT keskusdivari.teos.nimi, keskusdivari.teos.tekija,";
+            sql += "keskusdivari.nide.hinta, keskusdivari.divari.nimi AS divari, ";
+            sql += "SUM(keskusdivari.nide.hinta) AS summa, SUM(keskusdivari.teos.paino) AS paino ";
+            sql += "FROM keskusdivari.tilaus ";
+            sql += "LEFT JOIN keskusdivari.nide ON keskusdivari.tilaus.nide_id = keskusdivari.nide.nide_id ";
+            sql += "LEFT JOIN keskusdivari.teos ON keskusdivari.nide.teos_id = keskusdivari.teos.teos_id ";
+            sql += "LEFT JOIN keskusdivari.divari ON keskusdivari.nide.divari_id = keskusdivari.divari.divari_id ";
+            sql += "WHERE keskusdivari.tilaus.asiakas_id = ? ";
+            sql += "GROUP BY keskusdivari.teos.nimi, keskusdivari.teos.tekija, keskusdivari.nide.hinta, divari";
+            pstmt = con.prepareStatement(sql);
+            pstmt.clearParameters();
+            pstmt.setInt(1, customer.userId());
+            ResultSet rset = pstmt.executeQuery();
+            while (rset.next()) {
+//                System.out.println("T�m� tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
+                sum = rset.getFloat("summa");
+                totalWeight = rset.getInt("paino");
+                System.out.println("------------------------");
+                System.out.println("NIMI: " + rset.getString("nimi"));
+                System.out.println("KIRJAILIJA: " + rset.getString("tekija"));
+                System.out.println("HINTA: " + rset.getFloat("hinta"));
+                System.out.println("DIVARI: " + rset.getString("divari"));
+//                ResultSetMetaData metadata = rset.getMetaData();
+//                StringBuilder row = new StringBuilder();
+//                for (int i = 1; i <= metadata.getColumnCount(); i++) {
+//                    row.append(rset.getString(i)).append(", ");
+//                }
+//                System.out.println("T�ydet tiedot: " + row);
+            }
+            System.out.println("------------------------");
+            System.out.println("Tilauksen yhteishinta: " + sum + " euroa");
+            System.out.println("Tilauksen yhteispaino: " + totalWeight + " grammaa");
+            pstmt.close();  // sulkee automaattisesti my�s tulosjoukon rset
+        } catch (SQLException err) {
             System.out.println("Shit went down, yo " + err.getMessage());
-        } finally {
+        }
+        finally {
             closeConnection(con);
         }
     }
