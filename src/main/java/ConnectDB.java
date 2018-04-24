@@ -59,6 +59,39 @@ class ConnectDB {
         }
     }
 
+    static void searchAllByColumn(String paramName) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+
+        try {
+            PreparedStatement pstmt;
+            String sql = "SELECT t.luokka, SUM(n.hinta), AVG(n.hinta)\n" +
+                    "FROM keskusdivari.nide AS n\n" +
+                    "LEFT JOIN keskusdivari.teos AS t ON n.teos_id = t.teos_id\n" +
+                    "WHERE t.luokka = ?\n" +
+                    "GROUP BY t.luokka\n" +
+                    ";";
+            pstmt = con.prepareStatement(sql);
+            pstmt.clearParameters();
+            pstmt.setString(1, paramName);
+            ResultSet rset = pstmt.executeQuery();
+            if (rset.next()) {
+                do {
+                    System.out.println("------------------------");
+                    System.out.println("LUOKKA: " + rset.getString("luokka"));
+                    System.out.println("KOKONAISHINTA: " + rset.getInt("sum"));
+                    System.out.println("KESKIHINTA: " + rset.getInt("avg"));
+                    System.out.println("------------------------");
+                } while (rset.next());
+            }
+        } catch (SQLException err) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        }
+        finally {
+            closeConnection(con);
+        }
+    }
+
     static void doSearchByColumn(String columnName, String paramName) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
