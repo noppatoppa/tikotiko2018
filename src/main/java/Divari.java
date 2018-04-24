@@ -73,8 +73,9 @@ public class Divari {
                         cont = false;
                         break;
                     case 2:
-                        System.out.println("Hae luokalla: ");
-                        String bookClassTot = user_input.nextLine();
+                        //System.out.println("Hae luokalla: ");
+                        //String bookClassTot = user_input.nextLine();
+                        String bookClassTot = "";
                         ConnectDB.searchAllByColumn(bookClassTot);
                         cont = false;
                         break;
