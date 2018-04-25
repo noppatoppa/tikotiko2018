@@ -71,7 +71,8 @@ class ConnectDB {
             String sql = "SELECT t.luokka, SUM(n.hinta), AVG(n.hinta)\n" +
                     "FROM keskusdivari.nide AS n\n" +
                     "LEFT JOIN keskusdivari.teos AS t ON n.teos_id = t.teos_id\n" +
-                    //"WHERE t.luokka = ?\n" +
+                    "WHERE n.nide_id NOT IN (\n" +
+                    "select nide_id from keskusdivari.tilaus where tila IN ('varattu', 'myyty'))" +
                     "GROUP BY t.luokka\n" +
                     ";";
             pstmt = con.prepareStatement(sql);
