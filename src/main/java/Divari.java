@@ -45,12 +45,6 @@ public class Divari {
                         idList = ConnectDB.doSearchByColumn("luokka", bookClass);
                         cont = false;
                         break;
-                    case 5:
-                        System.out.println("Hae luokalla: ");
-                        String bookClassTot = user_input.nextLine();
-                        ConnectDB.searchAllByColumn(bookClassTot);
-                        cont = false;
-                        break;
                     default:
                         System.out.println("Valitettavasti valintaasi ei löydy, kokeile jotakin toista");
                 }
