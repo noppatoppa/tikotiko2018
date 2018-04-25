@@ -16,6 +16,7 @@ public class Customer implements Users {
             String[] data = ConnectDB.getAuthFromDb(auth[0]);
             password = data[0];
             userId = Integer.parseInt(data[1]);
+            isUserAdmin = Boolean.parseBoolean(data[2]);
         } catch (Exception err) {
             System.out.println("Problem occurred getting auth: " + err);
         }

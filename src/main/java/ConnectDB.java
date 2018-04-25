@@ -120,7 +120,6 @@ class ConnectDB {
             pstmt.setString(1, "%" + paramName + "%");
             ResultSet rset = pstmt.executeQuery();
             while (rset.next()) {
-//                System.out.println("Tämä tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
                 System.out.println("------------------------");
                 System.out.println("Hakutulos " + (rowCount + 1));
                 System.out.println("NIMI: " + rset.getString("nimi"));
@@ -132,12 +131,12 @@ class ConnectDB {
 //                for (int i = 1; i <= metadata.getColumnCount(); i++) {
 //                    row.append(rset.getString(i)).append(", ");
 //                }
-//                System.out.println("Täydet tiedot: " + row);
                 idList.add(rset.getInt("nide_id"));
                 rowCount++;
             }
             System.out.println("------------------------");
             System.out.println("Tuloksia: " + rowCount + " kappaletta");
+
             pstmt.close();  // sulkee automaattisesti myös tulosjoukon rset
         } catch (SQLException err) {
             System.out.println("Shit went down, yo " + err.getMessage());
@@ -149,25 +148,27 @@ class ConnectDB {
         return idList;
     }
 
-    // returns an array where 0 = password, 1 = user id on successful auth
+    // returns an array where 0 = password, 1 = user id, 2 = admin on successful auth
     static String[] getAuthFromDb(String username) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
-        String[] authData = new String[2];
+        String[] authData = new String[3];
 
         try {
             PreparedStatement pstmt;
-            pstmt = con.prepareStatement("SELECT salasana, asiakas_id FROM keskusdivari.asiakas WHERE ktunnus = ?");
+            pstmt = con.prepareStatement("SELECT salasana, asiakas_id, admin FROM keskusdivari.asiakas WHERE ktunnus = ?");
             pstmt.clearParameters();
             pstmt.setString(1, username);
             ResultSet rset = pstmt.executeQuery();
             if (rset.next()) {
                 authData[0] = rset.getString("salasana");
                 authData[1] = Integer.toString(rset.getInt("asiakas_id"));
+                authData[2] = Boolean.toString(rset.getBoolean("admin"));
             } else {
                 System.out.println("Ei löytynyt mitään!");
                 authData[0] = null;
                 authData[1] = null;
+                authData[2] = null;
             }
             pstmt.close();  // sulkee automaattisesti myös tulosjoukon rset
         } catch (SQLException err) {
@@ -247,8 +248,8 @@ class ConnectDB {
             pstmt.setString(1, args[0]);
             pstmt.setString(2, args[1]);
             pstmt.setString(3, args[2]);
-            pstmt.setString(4, args[2]);
-            pstmt.setString(5, args[2]);
+            pstmt.setString(4, args[3]);
+            pstmt.setString(5, args[4]);
             pstmt.setInt(6, Integer.parseInt(args[5]));
             pstmt.executeUpdate();
         } catch ( Exception err ) {
@@ -268,7 +269,7 @@ class ConnectDB {
             pstmt.setInt(1, Integer.parseInt(args[0]));
             pstmt.setFloat(2, Float.parseFloat(args[1]));
             pstmt.setFloat(3, Float.parseFloat(args[2]));
-            pstmt.setInt(4, 0);
+            pstmt.setInt(4, Integer.parseInt(args[3]));
             pstmt.executeUpdate();
         } catch ( Exception err ) {
             System.out.println("Shit went down, yo " + err.getMessage());
@@ -323,7 +324,6 @@ class ConnectDB {
             ResultSet rset = pstmt.executeQuery();
             System.out.println("Varatut niteesi:");
             while (rset.next()) {
-//                System.out.println("Tämä tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
                 sum = rset.getFloat("summa");
                 totalWeight = rset.getInt("paino");
                 System.out.println("------------------------");
@@ -336,7 +336,6 @@ class ConnectDB {
 //                for (int i = 1; i <= metadata.getColumnCount(); i++) {
 //                    row.append(rset.getString(i)).append(", ");
 //                }
-//                System.out.println("Täydet tiedot: " + row);
                 rowCount++;
             }
             

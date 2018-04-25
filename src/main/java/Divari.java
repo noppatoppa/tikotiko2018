@@ -234,8 +234,9 @@ public class Divari {
                           String salePrice = user_input.nextLine();
                       System.out.println("Ostohinta:");
                           String purchasePrice = user_input.nextLine();
+                      String shop_id = "0";
 
-                      String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice};
+                      String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice, shop_id};
                       ConnectDB.addItem(itemData);
                       break;
                   case 3:
