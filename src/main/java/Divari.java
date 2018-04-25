@@ -12,7 +12,7 @@ public class Divari {
         - SQL creation statements
         - Schema-based admin authentication
      */
-
+    
     private static List<Integer> searchBooks() {
         Scanner user_input = new Scanner(System.in);
         Integer selection = View.searchMenuView();
@@ -225,7 +225,7 @@ public class Divari {
                         String weight = user_input.nextLine();
 
                       String bookData[] = {isbn, author, title, genre, type, weight};
-                      ConnectDB.addBook(bookData);
+                      ConnectDB.addBook(customer, bookData);
                       break;
                   case 2:
                       System.out.println("Syötä kirjan ISBN-numero:");
@@ -243,7 +243,7 @@ public class Divari {
                       String shop_id = "0";
 
                       String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice, shop_id};
-                      ConnectDB.addItem(itemData);
+                      ConnectDB.addItem(customer, itemData);
                       break;
                   case 3:
                       System.out.println("Kirjaudutaan ulos");
