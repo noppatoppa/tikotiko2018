@@ -294,10 +294,11 @@ class ConnectDB {
         }
     }
     
-    static void getActiveOrders(Customer customer) {
+    static int getActiveOrders(Customer customer) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
 
+        int rowCount = 0;
         try {
             PreparedStatement pstmt;
             float sum = 0;
@@ -310,6 +311,7 @@ class ConnectDB {
             sql += "LEFT JOIN keskusdivari.teos ON keskusdivari.nide.teos_id = keskusdivari.teos.teos_id ";
             sql += "LEFT JOIN keskusdivari.divari ON keskusdivari.nide.divari_id = keskusdivari.divari.divari_id ";
             sql += "WHERE keskusdivari.tilaus.asiakas_id = ? ";
+            sql += "AND keskusdivari.tilaus.tila = 'varattu' ";
             sql += "GROUP BY keskusdivari.teos.nimi, keskusdivari.teos.tekija, keskusdivari.nide.hinta, divari";
             pstmt = con.prepareStatement(sql);
             pstmt.clearParameters();
@@ -331,15 +333,87 @@ class ConnectDB {
 //                    row.append(rset.getString(i)).append(", ");
 //                }
 //                System.out.println("Täydet tiedot: " + row);
+                rowCount++;
             }
+            
+            if (rowCount == 0) {
+                System.out.println("Sinulla ei ole tällä hetkellä yhtään varausta.");
+                return rowCount;
+            }
+            
             System.out.println("------------------------");
-            System.out.println(String.format("Tilauksen yhteishinta: %.2f", sum) + " euroa");
-            System.out.println("Tilauksen yhteispaino: " + totalWeight + " grammaa");
+            System.out.println(String.format("Niteiden hinta: %.2f euroa", sum));
+            
+            float postageRate = 0;
+            
+            if (totalWeight >= 50 && totalWeight < 100) {
+                postageRate = 1.4f;
+            }
+            else if (totalWeight >= 100 && totalWeight < 250) {
+                postageRate = 2.1f;
+            }
+            else if (totalWeight >= 250 && totalWeight < 500) {
+                postageRate = 2.8f;
+            }
+            else if (totalWeight >= 500 && totalWeight < 1000) {
+                postageRate = 5.6f;
+            }
+            else if (totalWeight >= 1000 && totalWeight < 2000) {
+                postageRate = 8.4f;
+            }
+            else if (totalWeight < 2000) {
+                postageRate = 14.0f;
+            }
+            System.out.println(String.format("Postikulut: %.2f euroa", postageRate));
+            System.out.println(String.format("Tilauksen yhteishinta: %.2f euroa", sum + postageRate));
+            System.out.println();
             pstmt.close();  // sulkee automaattisesti myös tulosjoukon rset
         } catch (SQLException err) {
             System.out.println("Shit went down, yo " + err.getMessage());
         }
         finally {
+            closeConnection(con);
+        }
+        
+        return rowCount;
+    }
+    
+    static void finishOrders(Customer customer) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        
+        try {
+            String sql = "UPDATE keskusdivari.tilaus SET tila = ? ";
+            sql += "WHERE asiakas_id = ?";
+            
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, "myyty");
+            pstmt.setInt(2, customer.userId());
+            pstmt.executeUpdate();
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
+            closeConnection(con);
+        }
+    }
+    
+    static void clearOrders(Customer customer) {
+        String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
+        Connection con = connect(params);
+        
+        try {
+            String sql = "DELETE FROM keskusdivari.tilaus ";
+            sql += "WHERE keskusdivari.tilaus.asiakas_id = ? ";
+            sql += "AND keskusdivari.tilaus.tila = 'varattu'";
+            
+            PreparedStatement pstmt;
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, customer.userId());
+            pstmt.executeUpdate();
+        } catch ( Exception err ) {
+            System.out.println("Shit went down, yo " + err.getMessage());
+        } finally {
             closeConnection(con);
         }
     }

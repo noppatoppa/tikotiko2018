@@ -43,6 +43,16 @@ class View {
 
         return Integer.parseInt(selection);
     }
+    
+    static int orderMenuView () {
+        System.out.println("1) Maksa tilaus");
+        System.out.println("2) Peru tilaus");
+        System.out.println("3) Palaa takaisin");
+        Scanner user_input = new Scanner(System.in);
+        String selection = user_input.nextLine();
+
+        return Integer.parseInt(selection);
+    }
 
     static int userLogInView () {
         /* Let's show a prompt for the user */

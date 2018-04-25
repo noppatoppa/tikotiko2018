@@ -162,7 +162,28 @@ public class Divari {
                       }     
                       break;
                   case 3:
-                      ConnectDB.getActiveOrders(customer);
+                      int found = ConnectDB.getActiveOrders(customer);
+                      
+                      if (found > 0) {
+                          Integer orderSelection = View.orderMenuView();
+                          
+                          switch (orderSelection) {
+                              case 1:
+                                ConnectDB.finishOrders(customer);
+                                System.out.println("Tilaus varmistettu. Maksu suoritettu onnistuneesti.");
+                                break;
+                              case 2:
+                                ConnectDB.clearOrders(customer);
+                                System.out.println("Tilaus peruttu onnistuneesti.");
+                                break;
+                              case 3:
+                                break;
+                              default:
+                                System.out.println("Valitettavasti valintaasi ei löydy, kokeile jotakin toista.");
+                                break;
+                          }
+                      }
+                      
                       break;
                   case 4:
                       System.out.println("Kirjaudu ulos");
