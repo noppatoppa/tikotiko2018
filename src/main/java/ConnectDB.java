@@ -110,13 +110,16 @@ class ConnectDB {
             sql += "FROM keskusdivari.teos ";
             sql += "LEFT JOIN keskusdivari.nide ON keskusdivari.teos.teos_id = keskusdivari.nide.teos_id ";
             sql += "LEFT JOIN keskusdivari.divari ON keskusdivari.nide.divari_id = keskusdivari.divari.divari_id ";
-            sql += "WHERE keskusdivari.teos." + columnName + " ILIKE ? ;";
+            sql += "WHERE keskusdivari.nide.nide_id NOT IN (\n" +
+                    "\tselect nide_id from keskusdivari.tilaus where tila IN ('varattu', 'myyty') \n" +
+                    ")";
+            sql += "AND keskusdivari.teos." + columnName + " ILIKE ? ;";
             pstmt = con.prepareStatement(sql);
             pstmt.clearParameters();
             pstmt.setString(1, "%" + paramName + "%");
             ResultSet rset = pstmt.executeQuery();
             while (rset.next()) {
-//                System.out.println("T‰m‰ tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
+//                System.out.println("T√§m√§ tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
                 System.out.println("------------------------");
                 System.out.println("Hakutulos " + (rowCount + 1));
                 System.out.println("NIMI: " + rset.getString("nimi"));
@@ -128,13 +131,13 @@ class ConnectDB {
 //                for (int i = 1; i <= metadata.getColumnCount(); i++) {
 //                    row.append(rset.getString(i)).append(", ");
 //                }
-//                System.out.println("T‰ydet tiedot: " + row);
+//                System.out.println("T√§ydet tiedot: " + row);
                 idList.add(rset.getInt("nide_id"));
                 rowCount++;
             }
             System.out.println("------------------------");
             System.out.println("Tuloksia: " + rowCount + " kappaletta");
-            pstmt.close();  // sulkee automaattisesti myˆs tulosjoukon rset
+            pstmt.close();  // sulkee automaattisesti my√∂s tulosjoukon rset
         } catch (SQLException err) {
             System.out.println("Shit went down, yo " + err.getMessage());
         }
@@ -319,7 +322,7 @@ class ConnectDB {
             ResultSet rset = pstmt.executeQuery();
             System.out.println("Varatut niteesi:");
             while (rset.next()) {
-//                System.out.println("T‰m‰ tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
+//                System.out.println("T√§m√§ tulee prepared statementista hakusanalla: " + columnName + " " + paramName);
                 sum = rset.getFloat("summa");
                 totalWeight = rset.getInt("paino");
                 System.out.println("------------------------");
@@ -332,12 +335,12 @@ class ConnectDB {
 //                for (int i = 1; i <= metadata.getColumnCount(); i++) {
 //                    row.append(rset.getString(i)).append(", ");
 //                }
-//                System.out.println("T‰ydet tiedot: " + row);
+//                System.out.println("T√§ydet tiedot: " + row);
                 rowCount++;
             }
             
             if (rowCount == 0) {
-                System.out.println("Sinulla ei ole t‰ll‰ hetkell‰ yht‰‰n varausta.");
+                System.out.println("Sinulla ei ole t√§ll√§ hetkell√§ yht√§√§n varausta.");
                 return rowCount;
             }
             
@@ -367,7 +370,7 @@ class ConnectDB {
             System.out.println(String.format("Postikulut: %.2f euroa", postageRate));
             System.out.println(String.format("Tilauksen yhteishinta: %.2f euroa", sum + postageRate));
             System.out.println();
-            pstmt.close();  // sulkee automaattisesti myˆs tulosjoukon rset
+            pstmt.close();  // sulkee automaattisesti my√∂s tulosjoukon rset
         } catch (SQLException err) {
             System.out.println("Shit went down, yo " + err.getMessage());
         }
