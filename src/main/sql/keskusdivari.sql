@@ -50,11 +50,3 @@ CREATE TABLE keskusdivari.tilaus(
     FOREIGN KEY (asiakas_id) REFERENCES keskusdivari.asiakas (asiakas_id),
     FOREIGN KEY (nide_id) REFERENCES keskusdivari.nide (nide_id)
 );
-
-CREATE TABLE keskusdivari.tilaa(
-    asiakas_id          INT             NOT NULL,
-    tilaus_id           INT             NOT NULL,
-    PRIMARY KEY (asiakas_id, tilaus_id),
-    FOREIGN KEY (asiakas_id) REFERENCES keskusdivari.asiakas,
-    FOREIGN KEY (tilaus_id) REFERENCES keskusdivari.tilaus
-);
