@@ -202,7 +202,7 @@ public class Divari {
                   case 1:
                       System.out.println("Syötä ISBN-numero:");
                       isbn = user_input.nextLine();
-                      if (ConnectDB.getBookByIsbn(isbn) != -1) {
+                      if (ConnectDB.getBookByIsbn(customer, isbn) != -1) {
                           System.out.println("Kyseisellä ISBN-numerolla löytyy jo teos.");
                           break;
                       }
@@ -224,7 +224,7 @@ public class Divari {
                   case 2:
                       System.out.println("Syötä kirjan ISBN-numero:");
                       isbn = user_input.nextLine();
-                      int bookID = ConnectDB.getBookByIsbn(isbn);
+                      int bookID = ConnectDB.getBookByIsbn(customer, isbn);
                       if (bookID == -1) {
                           System.out.println("Kyseisellä ISBN-numerolla löytyy jo teos, yritä uudelleen.");
                           break;

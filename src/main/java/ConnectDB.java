@@ -214,13 +214,20 @@ class ConnectDB {
     }
 
     // returns the id of the book if found, otherwise -1
-    static int getBookByIsbn(String isbn) {
+    static int getBookByIsbn(Customer customer, String isbn) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
         
         try {
-            PreparedStatement pstmt;
-            pstmt = con.prepareStatement("SELECT keskusdivari.teos.teos_id FROM teos WHERE isbn = ?");
+            PreparedStatement pstmt = null;
+            
+            if (customer.userId() == 2) {
+                pstmt = con.prepareStatement("SELECT yksidivari.teos.teos_id FROM keskusdivari.teos WHERE isbn = ?");
+            }
+            else if (customer.userId() == 3) {
+                pstmt = con.prepareStatement("SELECT keskusdivari.teos.teos_id FROM keskusdivari.teos WHERE isbn = ?");
+            }
+            
             pstmt.clearParameters();
             pstmt.setString(1, isbn);
             ResultSet rset = pstmt.executeQuery();
