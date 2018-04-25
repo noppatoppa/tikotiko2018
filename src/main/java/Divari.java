@@ -151,12 +151,12 @@ public class Divari {
                       List<Integer> idList = searchBooks();
                       
                       if (idList != null) {
-                          System.out.println("Lis‰‰ haluamasi nide tilaukseen syˆtt‰m‰ll‰ sen j‰rjestysnumeron tai \"0\" ilman lainausmerkkej‰ peruaksesi valinnan.");
+                          System.out.println("Lis√§√§ haluamasi nide tilaukseen sy√∂tt√§m√§ll√§ sen j√§rjestysluvun tai \"0\" ilman lainausmerkkej√§ peruaksesi valinnan.");
                           int row = Integer.parseInt(user_input.nextLine());
                           
                           if (row > 0) {
                               ConnectDB.addOrder(customer, idList.get(row - 1));
-                              System.out.println("Nide lis‰tty onnistuneesti tilaukseesi.");
+                              System.out.println("Nide lis√§tty onnistuneesti tilaukseesi.");
                               System.out.println();
                           }
                       }     
@@ -215,7 +215,7 @@ public class Divari {
 
                       System.out.println("Kirjan nimi:");
                         String title = user_input.nextLine();
-                      System.out.println("Kirjan tekij‰:");
+                      System.out.println("Kirjan tekij√§:");
                         String author = user_input.nextLine();
                       System.out.println("Kirjan luokka:");
                         String genre = user_input.nextLine();
@@ -240,8 +240,9 @@ public class Divari {
                           String salePrice = user_input.nextLine();
                       System.out.println("Ostohinta:");
                           String purchasePrice = user_input.nextLine();
+                      String shop_id = "0";
 
-                      String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice};
+                      String itemData[] = {Integer.toString(bookID), salePrice, purchasePrice, shop_id};
                       ConnectDB.addItem(itemData);
                       break;
                   case 3:
