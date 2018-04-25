@@ -11,7 +11,7 @@ class ConnectDB {
     private static final String TIETOKANTA = "divari";  // tähän oma käyttäjätunnus
     private static final String KAYTTAJA = "postgres";  // tähän oma käyttäjätunnus
     private static final String SALASANA = "salakala";  // tähän tietokannan salasana
-
+ 
 
     private static Connection connect(String[] args) {
         Connection con = null;
@@ -238,13 +238,22 @@ class ConnectDB {
         return -1;
     }
     
-    static void addBook(String[] args) {
+    static void addBook(Customer customer, String[] args) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
         
         try {
-            PreparedStatement pstmt;
-            pstmt = con.prepareStatement("INSERT INTO keskusdivari.teos (isbn, tekija, nimi, luokka, tyyppi, paino) VALUES (?, ?, ?, ?, ?, ?)");
+            PreparedStatement pstmt = null;
+            
+            // d1 admin
+            if (customer.userId() == 2) {
+                pstmt = con.prepareStatement("INSERT INTO yksidivari.teos (isbn, tekija, nimi, luokka, tyyppi, paino) VALUES (?, ?, ?, ?, ?, ?)");
+            }
+            // d2 admin
+            else if (customer.userId() == 3) {
+                pstmt = con.prepareStatement("INSERT INTO keskusdivari.teos (isbn, tekija, nimi, luokka, tyyppi, paino) VALUES (?, ?, ?, ?, ?, ?)");
+            }
+            
             pstmt.setString(1, args[0]);
             pstmt.setString(2, args[1]);
             pstmt.setString(3, args[2]);
@@ -259,13 +268,22 @@ class ConnectDB {
         }
     }
     
-    static void addItem(String[] args) {
+    static void addItem(Customer customer, String[] args) {
         String[] params = {PROTOKOLLA, PALVELIN, PORTTI, TIETOKANTA, KAYTTAJA, SALASANA};
         Connection con = connect(params);
         
         try {
-            PreparedStatement pstmt;
-            pstmt = con.prepareStatement("INSERT INTO keskusdivari.nide (teos_id, hinta, sisaanosto_hinta, divari_id) VALUES (?, ?, ?, ?)");
+            PreparedStatement pstmt = null;
+            
+            // d1 admin
+            if (customer.userId() == 2) {
+                pstmt = con.prepareStatement("INSERT INTO yksidivari.nide (teos_id, hinta, sisaanosto_hinta, divari_id) VALUES (?, ?, ?, ?)");
+            }
+            // d2 admin
+            else if (customer.userId() == 3) {
+                pstmt = con.prepareStatement("INSERT INTO keskusdivari.nide (teos_id, hinta, sisaanosto_hinta, divari_id) VALUES (?, ?, ?, ?)");
+            }
+            
             pstmt.setInt(1, Integer.parseInt(args[0]));
             pstmt.setFloat(2, Float.parseFloat(args[1]));
             pstmt.setFloat(3, Float.parseFloat(args[2]));
