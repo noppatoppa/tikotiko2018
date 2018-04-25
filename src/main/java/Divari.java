@@ -45,12 +45,6 @@ public class Divari {
                         idList = ConnectDB.doSearchByColumn("luokka", bookClass);
                         cont = false;
                         break;
-                    case 5:
-                        System.out.println("Hae luokalla: ");
-                        String bookClassTot = user_input.nextLine();
-                        ConnectDB.searchAllByColumn(bookClassTot);
-                        cont = false;
-                        break;
                     default:
                         System.out.println("Valitettavasti valintaasi ei löydy, kokeile jotakin toista");
                 }
@@ -151,7 +145,7 @@ public class Divari {
                       List<Integer> idList = searchBooks();
                       
                       if (idList != null) {
-                          System.out.println("Lisää haluamasi nide tilaukseen syöttämällä sen järjestysluvun tai \"0\" ilman lainausmerkkejä peruaksesi valinnan.");
+                          System.out.println("Lisää haluamasi nide tilaukseen syöttämällä sen järjestysnumeron tai \"0\" ilman lainausmerkkejä peruaksesi valinnan.");
                           int row = Integer.parseInt(user_input.nextLine());
                           
                           if (row > 0) {
