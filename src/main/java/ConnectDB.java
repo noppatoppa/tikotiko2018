@@ -281,20 +281,23 @@ class ConnectDB {
         
         try {
             PreparedStatement pstmt = null;
+            int shop_id = 0;
             
             // d1 admin
             if (customer.userId() == 2) {
                 pstmt = con.prepareStatement("INSERT INTO yksidivari.nide (teos_id, hinta, sisaanosto_hinta, divari_id) VALUES (?, ?, ?, ?)");
+                shop_id = 1;
             }
             // d2 admin
             else if (customer.userId() == 3) {
                 pstmt = con.prepareStatement("INSERT INTO keskusdivari.nide (teos_id, hinta, sisaanosto_hinta, divari_id) VALUES (?, ?, ?, ?)");
+                shop_id = 2;
             }
             
             pstmt.setInt(1, Integer.parseInt(args[0]));
             pstmt.setFloat(2, Float.parseFloat(args[1]));
             pstmt.setFloat(3, Float.parseFloat(args[2]));
-            pstmt.setInt(4, Integer.parseInt(args[3]));
+            pstmt.setInt(4, shop_id);
             pstmt.executeUpdate();
         } catch ( Exception err ) {
             System.out.println("Shit went down, yo " + err.getMessage());
